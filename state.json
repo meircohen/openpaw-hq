@@ -1,0 +1,208 @@
+{
+  "lastUpdated": "2026-02-17T18:39:27-0500",
+  "company": {
+    "name": "OpenPaw",
+    "stage": "Pre-development",
+    "sprint": 0,
+    "week": 0
+  },
+  "stats": {
+    "docsTotal": 37,
+    "docsComplete": 18,
+    "specVolumeKB": 380,
+    "agentMissions": 11,
+    "successRate": 100,
+    "readinessPercent": 48,
+    "totalCost": "$0"
+  },
+  "agents": [
+    {
+      "id": "cto",
+      "name": "CTO Agent", 
+      "emoji": "🧠",
+      "title": "Chief Technology Officer",
+      "model": "Claude Sonnet 4",
+      "floor": "executive",
+      "status": "active",
+      "currentTask": "Building OpenPaw HQ live dashboard v2",
+      "tasksCompleted": 13,
+      "tasksTotal": 16,
+      "lastActive": "2026-02-17T18:39:27-0500",
+      "personality": "Systematic, detail-oriented"
+    },
+    {
+      "id": "architect",
+      "name": "Architecture Lead",
+      "emoji": "🏗️", 
+      "title": "Lead Architect",
+      "model": "Claude Sonnet 4",
+      "floor": "engineering",
+      "status": "idle",
+      "currentTask": "Technical architecture documentation",
+      "tasksCompleted": 8,
+      "tasksTotal": 12,
+      "lastActive": "2026-02-17T17:25:00-05:00",
+      "personality": "Pragmatic, forward-thinking"
+    },
+    {
+      "id": "product",
+      "name": "Product Lead",
+      "emoji": "📋",
+      "title": "Product Manager", 
+      "model": "Claude Sonnet 4",
+      "floor": "product",
+      "status": "idle",
+      "currentTask": "UI wireframes specification",
+      "tasksCompleted": 5,
+      "tasksTotal": 8,
+      "lastActive": "2026-02-17T16:45:00-05:00",
+      "personality": "User-focused, analytical"
+    },
+    {
+      "id": "frontend",
+      "name": "Frontend Engineer",
+      "emoji": "🎨",
+      "title": "UI/UX Developer",
+      "model": "Claude Sonnet 4", 
+      "floor": "engineering",
+      "status": "offline",
+      "currentTask": "Swift/AppKit interface design",
+      "tasksCompleted": 2,
+      "tasksTotal": 10,
+      "lastActive": "2026-02-17T15:20:00-05:00",
+      "personality": "Creative, detail-oriented"
+    },
+    {
+      "id": "systems", 
+      "name": "Systems Engineer",
+      "emoji": "⚡",
+      "title": "Infrastructure Lead",
+      "model": "Claude Sonnet 4",
+      "floor": "engineering",
+      "status": "offline",
+      "currentTask": "Virtual display integration research",
+      "tasksCompleted": 1,
+      "tasksTotal": 6,
+      "lastActive": "2026-02-17T14:30:00-05:00",
+      "personality": "Problem-solver, thorough"
+    },
+    {
+      "id": "qa",
+      "name": "QA Lead", 
+      "emoji": "🔍",
+      "title": "Quality Engineer",
+      "model": "Claude Sonnet 4",
+      "floor": "quality",
+      "status": "offline",
+      "currentTask": "Test framework specification",
+      "tasksCompleted": 3,
+      "tasksTotal": 5,
+      "lastActive": "2026-02-17T13:45:00-05:00",
+      "personality": "Meticulous, security-minded"
+    }
+  ],
+  "documents": [
+],
+  "feed": [
+    {
+      "timestamp": "2026-02-17T18:20:00-05:00",
+      "agent": "CTO Agent",
+      "emoji": "🧠",
+      "text": "Completed OpenPaw HQ dashboard v2 architecture",
+      "type": "ship"
+    },
+    {
+      "timestamp": "2026-02-17T17:45:00-05:00", 
+      "agent": "Product Lead",
+      "emoji": "📋",
+      "text": "Updated PROJECT-INDEX.md with latest document statuses",
+      "type": "action"
+    },
+    {
+      "timestamp": "2026-02-17T17:30:00-05:00",
+      "agent": "CTO Agent", 
+      "emoji": "🧠",
+      "text": "Decision: Use GitHub Pages for dashboard deployment",
+      "type": "decision"
+    },
+    {
+      "timestamp": "2026-02-17T16:00:00-05:00",
+      "agent": "CEO",
+      "emoji": "👑", 
+      "text": "Approved dashboard v2 specification and design system",
+      "type": "ceo"
+    }
+  ],
+  "roadmap": [
+    {
+      "week": "1-2",
+      "name": "Foundation & Architecture", 
+      "status": "not-started",
+      "progress": 0
+    },
+    {
+      "week": "3-4",
+      "name": "Core Systems Development",
+      "status": "not-started", 
+      "progress": 0
+    },
+    {
+      "week": "5-6", 
+      "name": "UI & User Experience",
+      "status": "not-started",
+      "progress": 0
+    },
+    {
+      "week": "7-8",
+      "name": "AI Integration & Testing",
+      "status": "not-started",
+      "progress": 0
+    },
+    {
+      "week": "9-10",
+      "name": "Security & Performance",
+      "status": "not-started", 
+      "progress": 0
+    },
+    {
+      "week": "11-12",
+      "name": "Launch Preparation",
+      "status": "not-started",
+      "progress": 0
+    }
+  ],
+  "ceoActions": [
+    {
+      "text": "Create GitHub org openpaw",
+      "priority": "high",
+      "status": "pending"
+    },
+    {
+      "text": "Purchase domain (openpaw.com)",
+      "priority": "high", 
+      "status": "pending"
+    },
+    {
+      "text": "Apple Developer account setup",
+      "priority": "medium",
+      "status": "pending"
+    }
+  ],
+  "adrs": [
+    {
+      "id": "ADR-001", 
+      "decision": "Swift + AppKit",
+      "rationale": "Menu bar needs AppKit"
+    },
+    {
+      "id": "ADR-002",
+      "decision": "OpenClaw as AI engine", 
+      "rationale": "Proven agent orchestration system"
+    },
+    {
+      "id": "ADR-003",
+      "decision": "Vision-based screen capture",
+      "rationale": "Resilient to UI changes"
+    }
+  ]
+}

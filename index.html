@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenPaw HQ 🐾 — Live Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paw: #FF6B4A;
+    --paw-dark: #E55A3A;
+    --paw-light: rgba(255, 107, 74, 0.1);
+    --bg: #0c0e14;
+    --floor: #141820;
+    --card: #1a1f2e;
+    --card-hover: #222840;
+    --border: #2a3045;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --green: #22c55e;
+    --green-glow: rgba(34,197,94,0.3);
+    --yellow: #eab308;
+    --yellow-glow: rgba(234,179,8,0.3);
+    --red: #ef4444;
+    --blue: #3b82f6;
+    --purple: #a855f7;
+    --cyan: #06b6d4;
+    --orange: #f97316;
+    --pink: #ec4899;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* Ambient background effects */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 50%, rgba(255, 107, 74, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 40% 80%, rgba(168, 85, 247, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  /* Header */
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(12, 14, 20, 0.9);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 2rem;
+  }
+
+  .header-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--paw);
+  }
+
+  .status-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--card);
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .last-updated {
+    font-size: 0.75rem;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  /* Main container */
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  /* Glass morphism cards */
+  .glass-card {
+    background: rgba(26, 31, 46, 0.7);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+  }
+
+  .glass-card:hover {
+    background: rgba(34, 40, 64, 0.7);
+    border-color: var(--paw);
+    transform: translateY(-2px);
+  }
+
+  /* Grid layouts */
+  .grid {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .grid-2 { grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); }
+  .grid-3 { grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); }
+  .grid-4 { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+
+  @media (max-width: 768px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  }
+
+  /* Section headers */
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: between;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  /* About OpenPaw section */
+  .about-openpaw {
+    background: linear-gradient(135deg, var(--paw-light), rgba(59, 130, 246, 0.1));
+    border: 1px solid var(--paw);
+    margin-bottom: 3rem;
+  }
+
+  .about-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  @media (max-width: 768px) {
+    .about-content { grid-template-columns: 1fr; }
+  }
+
+  .about-text h2 {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, var(--paw), var(--orange));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .about-text p {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    line-height: 1.7;
+  }
+
+  .tagline {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--paw);
+    margin-bottom: 0.5rem;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .feature-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+  }
+
+  .feature-item .emoji {
+    font-size: 1.2rem;
+  }
+
+  /* Stats cards */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+
+  .stat-card {
+    text-align: center;
+    padding: 1.5rem 1rem;
+    background: var(--card);
+    border-radius: 0.75rem;
+    border: 1px solid var(--border);
+    transition: all 0.3s ease;
+  }
+
+  .stat-card:hover {
+    border-color: var(--paw);
+    transform: translateY(-2px);
+  }
+
+  .stat-number {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--paw);
+    display: block;
+  }
+
+  .stat-label {
+    font-size: 0.875rem;
+    color: var(--muted);
+    font-weight: 500;
+    margin-top: 0.25rem;
+  }
+
+  /* Agent cards */
+  .agent-card {
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .agent-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--paw), var(--orange));
+  }
+
+  .agent-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  .agent-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .agent-emoji {
+    font-size: 2rem;
+  }
+
+  .agent-details h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+
+  .agent-title {
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+
+  .agent-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .status-active {
+    background: var(--green-glow);
+    color: var(--green);
+    border: 1px solid var(--green);
+  }
+
+  .status-idle {
+    background: var(--yellow-glow);
+    color: var(--yellow);
+    border: 1px solid var(--yellow);
+  }
+
+  .status-offline {
+    background: rgba(148, 163, 184, 0.2);
+    color: var(--muted);
+    border: 1px solid var(--muted);
+  }
+
+  .agent-task {
+    font-size: 0.9rem;
+    margin: 1rem 0;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 0.5rem;
+    border-left: 3px solid var(--paw);
+  }
+
+  .agent-progress {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1rem;
+  }
+
+  .progress-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 0 1rem;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--paw), var(--orange));
+    transition: width 0.3s ease;
+  }
+
+  /* Documentation browser */
+  .docs-browser {
+    max-height: 600px;
+    overflow-y: auto;
+  }
+
+  .docs-nav {
+    display: grid;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .doc-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 0.5rem;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .doc-item:hover {
+    border-color: var(--paw);
+    background: var(--paw-light);
+  }
+
+  .doc-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .doc-category {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .cat-strategy { background: rgba(168, 85, 247, 0.2); color: var(--purple); }
+  .cat-architecture { background: rgba(59, 130, 246, 0.2); color: var(--blue); }
+  .cat-engineering { background: rgba(34, 197, 94, 0.2); color: var(--green); }
+  .cat-brand { background: rgba(255, 107, 74, 0.2); color: var(--paw); }
+  .cat-research { background: rgba(6, 182, 212, 0.2); color: var(--cyan); }
+  .cat-quality { background: rgba(234, 179, 8, 0.2); color: var(--yellow); }
+
+  .doc-status {
+    font-size: 0.75rem;
+  }
+
+  .status-complete::before { content: '✅'; margin-right: 0.25rem; }
+  .status-in-progress::before { content: '🔄'; margin-right: 0.25rem; }
+  .status-planned::before { content: '📋'; margin-right: 0.25rem; }
+
+  /* Activity feed */
+  .activity-feed {
+    max-height: 500px;
+    overflow-y: auto;
+  }
+
+  .feed-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .feed-item:last-child {
+    border-bottom: none;
+  }
+
+  .feed-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+  }
+
+  .feed-content {
+    flex: 1;
+  }
+
+  .feed-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .feed-agent {
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+
+  .feed-time {
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .feed-text {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .feed-type {
+    padding: 0.125rem 0.5rem;
+    border-radius: 0.75rem;
+    font-size: 0.625rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .type-ship { background: var(--green-glow); color: var(--green); }
+  .type-action { background: rgba(59, 130, 246, 0.2); color: var(--blue); }
+  .type-decision { background: rgba(168, 85, 247, 0.2); color: var(--purple); }
+  .type-ceo { background: rgba(255, 107, 74, 0.2); color: var(--paw); }
+
+  /* Roadmap */
+  .roadmap-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 0.5rem;
+    margin-bottom: 0.75rem;
+    border-left: 4px solid var(--border);
+  }
+
+  .roadmap-week {
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: var(--paw);
+    min-width: 60px;
+  }
+
+  .roadmap-name {
+    flex: 1;
+    font-weight: 500;
+  }
+
+  .roadmap-progress {
+    width: 80px;
+    text-align: right;
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+
+  /* CEO Actions */
+  .ceo-action {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .priority-high {
+    border-left: 4px solid var(--red);
+  }
+
+  .priority-medium {
+    border-left: 4px solid var(--yellow);
+  }
+
+  .priority-low {
+    border-left: 4px solid var(--green);
+  }
+
+  .action-text {
+    flex: 1;
+    font-weight: 500;
+  }
+
+  .action-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: var(--yellow-glow);
+    color: var(--yellow);
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: 4rem;
+    padding: 2rem;
+    text-align: center;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+  }
+
+  .footer-logo {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--paw);
+    margin-bottom: 0.5rem;
+  }
+
+  /* Mobile responsiveness */
+  @media (max-width: 768px) {
+    .container {
+      padding: 1rem;
+    }
+
+    .header {
+      padding: 1rem;
+    }
+
+    .header-content {
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .about-content {
+      grid-template-columns: 1fr;
+    }
+
+    .features-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* Loading states */
+  .loading {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: -200px 0; }
+    100% { background-position: calc(200px + 100%) 0; }
+  }
+
+  .skeleton {
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+    background-size: 200px 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-content">
+    <div class="logo">
+      <span>🐾</span>
+      <span>OpenPaw HQ</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 2rem;">
+      <div class="status-pill">
+        <div class="status-dot"></div>
+        <span>Live Dashboard</span>
+      </div>
+      <div class="last-updated" id="lastUpdated">
+        Loading...
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  
+  <!-- About OpenPaw Section -->
+  <div class="glass-card about-openpaw">
+    <div class="about-content">
+      <div class="about-text">
+        <h2>About OpenPaw 🐾</h2>
+        <div class="tagline">"AI that just works"</div>
+        <p>
+          OpenPaw is a <strong>free, open-source Mac app</strong> that wraps OpenClaw as its engine to deliver the most intuitive AI assistant experience possible.
+        </p>
+        <p>
+          <strong>Zero-config onboarding.</strong> Native Swift UI. No cloud, no subscription, privacy by architecture. 
+          Users bring their own AI key or run completely local models.
+        </p>
+        <p>
+          Think <strong>"OpenClaw for power users, OpenPaw for everyone"</strong> — the Linux → Ubuntu analogy for AI assistants.
+        </p>
+        <div class="features-grid">
+          <div class="feature-item">
+            <span class="emoji">🏠</span>
+            <span>100% local processing</span>
+          </div>
+          <div class="feature-item">
+            <span class="emoji">🔒</span>
+            <span>Privacy by architecture</span>
+          </div>
+          <div class="feature-item">
+            <span class="emoji">⚡</span>
+            <span>Native Swift performance</span>
+          </div>
+          <div class="feature-item">
+            <span class="emoji">🆓</span>
+            <span>Completely free & open source</span>
+          </div>
+        </div>
+      </div>
+      <div class="about-meta">
+        <div style="text-align: center; padding: 2rem; background: rgba(255,255,255,0.03); border-radius: 1rem;">
+          <div style="font-size: 2.5rem; margin-bottom: 1rem;">🤖</div>
+          <div style="font-weight: 600; margin-bottom: 0.5rem;">Built by AI Agents</div>
+          <div style="font-size: 0.9rem; color: var(--muted);">
+            The entire startup — specs, code, design — created by AI agents. 
+            No human developers involved.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Overview -->
+  <div class="stats-grid" id="statsGrid">
+    <!-- Populated by JavaScript -->
+  </div>
+
+  <!-- Main Dashboard Grid -->
+  <div class="grid grid-2" style="margin-bottom: 3rem;">
+    
+    <!-- Office Floor - Agent Status -->
+    <div class="glass-card">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span>🏢</span>
+          <span>Agent Office Floor</span>
+        </h2>
+      </div>
+      <div class="grid grid-2" id="agentCards">
+        <!-- Populated by JavaScript -->
+      </div>
+    </div>
+
+    <!-- Activity Feed -->
+    <div class="glass-card">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span>📡</span>
+          <span>Live Activity Feed</span>
+        </h2>
+      </div>
+      <div class="activity-feed" id="activityFeed">
+        <!-- Populated by JavaScript -->
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Documentation & Vision Grid -->
+  <div class="grid grid-2" style="margin-bottom: 3rem;">
+
+    <!-- Product Vision -->
+    <div class="glass-card">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span>🎯</span>
+          <span>Product Vision</span>
+        </h2>
+      </div>
+      <div id="productVision">
+        <!-- Populated by JavaScript from PRD and other key docs -->
+      </div>
+    </div>
+
+    <!-- Documentation Browser -->
+    <div class="glass-card">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span>📚</span>
+          <span>Project Documentation</span>
+        </h2>
+      </div>
+      <div class="docs-browser" id="docsBrowser">
+        <!-- Populated by JavaScript -->
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Roadmap & CEO Actions -->
+  <div class="grid grid-2">
+
+    <!-- Development Roadmap -->
+    <div class="glass-card">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span>🗺️</span>
+          <span>12-Week Roadmap</span>
+        </h2>
+      </div>
+      <div id="roadmap">
+        <!-- Populated by JavaScript -->
+      </div>
+    </div>
+
+    <!-- CEO Actions Required -->
+    <div class="glass-card">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span>👑</span>
+          <span>CEO Actions Required</span>
+        </h2>
+      </div>
+      <div id="ceoActions">
+        <!-- Populated by JavaScript -->
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<footer class="footer">
+  <div class="footer-logo">OpenPaw HQ 🐾</div>
+  <div>Live view of an AI-powered startup built entirely by agents</div>
+  <div style="margin-top: 0.5rem;">
+    <a href="https://github.com/meircohen/openpaw-hq" style="color: var(--paw); text-decoration: none;">
+      View on GitHub
+    </a>
+    &nbsp;•&nbsp;
+    <span>openpaw.dev</span>
+  </div>
+</footer>
+
+<script>
+let state = {};
+let lastFetchTime = 0;
+
+// Initialize dashboard
+document.addEventListener('DOMContentLoaded', function() {
+  fetchState();
+  setInterval(fetchState, 30000); // Refresh every 30 seconds
+  setInterval(updateTimestamp, 1000); // Update "last updated" every second
+});
+
+// Fetch state.json
+async function fetchState() {
+  try {
+    const response = await fetch('./state.json?' + Date.now()); // Cache bust
+    if (response.ok) {
+      state = await response.json();
+      lastFetchTime = Date.now();
+      renderDashboard();
+    } else {
+      console.error('Failed to fetch state:', response.status);
+    }
+  } catch (error) {
+    console.error('Error fetching state:', error);
+  }
+}
+
+// Render entire dashboard
+function renderDashboard() {
+  if (!state || Object.keys(state).length === 0) return;
+  
+  renderStats();
+  renderAgents();
+  renderFeed();
+  renderDocs();
+  renderRoadmap();
+  renderCEOActions();
+  renderProductVision();
+}
+
+// Render stats cards
+function renderStats() {
+  const statsGrid = document.getElementById('statsGrid');
+  if (!state.stats) return;
+  
+  const stats = [
+    { label: 'Documents', value: state.stats.docsTotal, suffix: '' },
+    { label: 'Complete', value: state.stats.docsComplete, suffix: '' },
+    { label: 'Readiness', value: state.stats.readinessPercent, suffix: '%' },
+    { label: 'Success Rate', value: state.stats.successRate, suffix: '%' },
+    { label: 'Spec Volume', value: state.stats.specVolumeKB, suffix: 'KB' },
+    { label: 'Total Cost', value: state.stats.totalCost, suffix: '' }
+  ];
+  
+  statsGrid.innerHTML = stats.map(stat => `
+    <div class="stat-card">
+      <span class="stat-number">${stat.value}${stat.suffix}</span>
+      <div class="stat-label">${stat.label}</div>
+    </div>
+  `).join('');
+}
+
+// Render agent cards
+function renderAgents() {
+  const agentCards = document.getElementById('agentCards');
+  if (!state.agents) return;
+  
+  agentCards.innerHTML = state.agents.map(agent => {
+    const progress = agent.tasksTotal > 0 ? Math.round((agent.tasksCompleted / agent.tasksTotal) * 100) : 0;
+    
+    return `
+      <div class="agent-card glass-card">
+        <div class="agent-header">
+          <div class="agent-info">
+            <div class="agent-emoji">${agent.emoji}</div>
+            <div class="agent-details">
+              <h3>${agent.name}</h3>
+              <div class="agent-title">${agent.title}</div>
+            </div>
+          </div>
+          <div class="agent-status status-${agent.status}">${agent.status}</div>
+        </div>
+        <div class="agent-task">
+          <strong>Current:</strong> ${agent.currentTask}
+        </div>
+        <div class="agent-progress">
+          <span>${agent.tasksCompleted}/${agent.tasksTotal}</span>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: ${progress}%"></div>
+          </div>
+          <span>${progress}%</span>
+        </div>
+        <div style="font-size: 0.75rem; color: var(--muted); margin-top: 0.5rem;">
+          Model: ${agent.model} • Floor: ${agent.floor}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// Render activity feed
+function renderFeed() {
+  const feed = document.getElementById('activityFeed');
+  if (!state.feed) return;
+  
+  feed.innerHTML = state.feed.map(item => `
+    <div class="feed-item">
+      <div class="feed-avatar">${item.emoji}</div>
+      <div class="feed-content">
+        <div class="feed-meta">
+          <span class="feed-agent">${item.agent}</span>
+          <span class="feed-type type-${item.type}">${item.type}</span>
+          <span class="feed-time">${formatTime(item.timestamp)}</span>
+        </div>
+        <div class="feed-text">${item.text}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// Render documentation browser
+function renderDocs() {
+  const browser = document.getElementById('docsBrowser');
+  if (!state.documents) return;
+  
+  // Group by category
+  const categories = {};
+  state.documents.forEach(doc => {
+    if (!categories[doc.category]) categories[doc.category] = [];
+    categories[doc.category].push(doc);
+  });
+  
+  let html = '<div class="docs-nav">';
+  
+  Object.keys(categories).forEach(category => {
+    const categoryClass = `cat-${category.toLowerCase().replace(/[^a-z]/g, '')}`;
+    
+    categories[category].forEach(doc => {
+      const githubUrl = `https://github.com/meircohen/openpaw-hq/blob/main/docs/${doc.path}`;
+      
+      html += `
+        <a href="${githubUrl}" target="_blank" class="doc-item">
+          <div class="doc-info">
+            <div class="doc-category ${categoryClass}">${category}</div>
+            <div>
+              <div style="font-weight: 500;">${doc.name}</div>
+              <div style="font-size: 0.75rem; color: var(--muted);">
+                ${doc.sizeKB}KB • ${formatDate(doc.lastModified)}
+              </div>
+            </div>
+          </div>
+          <div class="doc-status status-${doc.status}">${doc.status.replace('-', ' ')}</div>
+        </a>
+      `;
+    });
+  });
+  
+  html += '</div>';
+  browser.innerHTML = html;
+}
+
+// Render roadmap
+function renderRoadmap() {
+  const roadmap = document.getElementById('roadmap');
+  if (!state.roadmap) return;
+  
+  roadmap.innerHTML = state.roadmap.map(phase => `
+    <div class="roadmap-item">
+      <div class="roadmap-week">Week ${phase.week}</div>
+      <div class="roadmap-name">${phase.name}</div>
+      <div class="roadmap-progress">${phase.progress}%</div>
+    </div>
+  `).join('');
+}
+
+// Render CEO actions
+function renderCEOActions() {
+  const actions = document.getElementById('ceoActions');
+  if (!state.ceoActions) return;
+  
+  actions.innerHTML = state.ceoActions.map(action => `
+    <div class="ceo-action priority-${action.priority}">
+      <div class="action-text">${action.text}</div>
+      <div class="action-status">${action.status}</div>
+    </div>
+  `).join('');
+}
+
+// Render product vision (would need to parse key docs)
+function renderProductVision() {
+  const vision = document.getElementById('productVision');
+  
+  // Static content for now - would be populated from PRD, brand guide, etc.
+  vision.innerHTML = `
+    <div style="margin-bottom: 1.5rem;">
+      <h3 style="color: var(--paw); margin-bottom: 0.5rem;">🎯 Mission</h3>
+      <p style="font-size: 0.95rem; line-height: 1.6;">
+        Make AI assistance accessible, private, and powerful for every Mac user through 
+        a zero-configuration native app.
+      </p>
+    </div>
+    
+    <div style="margin-bottom: 1.5rem;">
+      <h3 style="color: var(--paw); margin-bottom: 0.5rem;">🏗️ Tech Stack</h3>
+      <div class="features-grid" style="margin-top: 0.5rem;">
+        <div class="feature-item">
+          <span class="emoji">📱</span>
+          <span>Swift + AppKit</span>
+        </div>
+        <div class="feature-item">
+          <span class="emoji">🧠</span>
+          <span>OpenClaw Engine</span>
+        </div>
+        <div class="feature-item">
+          <span class="emoji">👁️</span>
+          <span>Vision-based UI</span>
+        </div>
+        <div class="feature-item">
+          <span class="emoji">🔧</span>
+          <span>Local-first Tools</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h3 style="color: var(--paw); margin-bottom: 0.5rem;">🎨 Why This Matters</h3>
+      <p style="font-size: 0.95rem; line-height: 1.6;">
+        Current AI assistants are either too complex (OpenClaw) or too limited (ChatGPT app). 
+        OpenPaw bridges this gap with enterprise-grade capabilities in consumer-friendly packaging.
+      </p>
+    </div>
+  `;
+}
+
+// Utility functions
+function formatTime(timestamp) {
+  const date = new Date(timestamp);
+  const now = new Date();
+  const diff = now - date;
+  const minutes = Math.floor(diff / 60000);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  
+  if (days > 0) return `${days}d ago`;
+  if (hours > 0) return `${hours}h ago`;
+  if (minutes > 0) return `${minutes}m ago`;
+  return 'Just now';
+}
+
+function formatDate(timestamp) {
+  return new Date(timestamp).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+}
+
+function updateTimestamp() {
+  const element = document.getElementById('lastUpdated');
+  if (!state.lastUpdated || !element) return;
+  
+  const lastUpdated = new Date(state.lastUpdated);
+  const now = new Date();
+  const diff = now - lastUpdated;
+  const minutes = Math.floor(diff / 60000);
+  
+  if (minutes === 0) {
+    element.textContent = 'Updated just now';
+  } else if (minutes === 1) {
+    element.textContent = 'Updated 1 minute ago';
+  } else {
+    element.textContent = `Updated ${minutes} minutes ago`;
+  }
+}
+
+</script>
+
+</body>
+</html>
