@@ -1,0 +1,30 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="64" cy="64" r="64" fill="#FF6B4A" opacity="0.15"/>
+  
+  <!-- Crown -->
+  <polygon points="44,35 50,25 58,30 64,20 70,30 78,25 84,35 84,45 44,45" fill="#FF6B4A"/>
+  <circle cx="52" cy="30" r="2" fill="#FFB8A3"/>
+  <circle cx="64" cy="25" r="3" fill="#FFB8A3"/>
+  <circle cx="76" cy="30" r="2" fill="#FFB8A3"/>
+  
+  <!-- Crown band -->
+  <rect x="44" y="40" width="40" height="8" fill="#e53935"/>
+  
+  <!-- Face -->
+  <circle cx="64" cy="70" r="25" fill="#fbbf24"/>
+  
+  <!-- Hair -->
+  <path d="M45 55 Q50 50 64 50 Q78 50 83 55 Q83 65 80 70 Q75 60 64 60 Q53 60 48 70 Q45 65 45 55" fill="#92400e"/>
+  
+  <!-- Eyes -->
+  <circle cx="57" cy="67" r="2" fill="#1f2937"/>
+  <circle cx="71" cy="67" r="2" fill="#1f2937"/>
+  
+  <!-- Warm smile -->
+  <path d="M54 78 Q64 85 74 78" stroke="#e53935" stroke-width="2" fill="none" stroke-linecap="round"/>
+  
+  <!-- Rosy cheeks -->
+  <circle cx="48" cy="75" r="3" fill="#FF6B4A" opacity="0.4"/>
+  <circle cx="80" cy="75" r="3" fill="#FF6B4A" opacity="0.4"/>
+</svg>

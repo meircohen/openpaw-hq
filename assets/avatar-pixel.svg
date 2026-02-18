@@ -1,0 +1,57 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="64" cy="64" r="64" fill="#ec4899" opacity="0.15"/>
+  
+  <!-- Artist beret -->
+  <ellipse cx="64" cy="45" rx="35" ry="15" fill="#ec4899"/>
+  <circle cx="64" cy="35" r="25" fill="#ec4899"/>
+  <circle cx="85" cy="32" r="4" fill="#f472b6"/>
+  
+  <!-- Beret highlight -->
+  <path d="M45 35 Q50 25 64 28 Q78 25 83 35" fill="#f472b6" opacity="0.6"/>
+  
+  <!-- Face -->
+  <circle cx="64" cy="75" r="22" fill="#fbbf24"/>
+  
+  <!-- Hair peeking out -->
+  <path d="M42 55 Q47 50 52 55 Q57 50 62 55" fill="#7c2d12"/>
+  <path d="M66 55 Q71 50 76 55 Q81 50 86 55" fill="#7c2d12"/>
+  
+  <!-- Creative eyes with sparkle -->
+  <circle cx="57" cy="70" r="3" fill="#1f2937"/>
+  <circle cx="71" cy="70" r="3" fill="#1f2937"/>
+  <circle cx="58" cy="69" r="1" fill="white"/>
+  <circle cx="72" cy="69" r="1" fill="white"/>
+  
+  <!-- Happy smile -->
+  <path d="M55 82 Q64 88 73 82" stroke="#ec4899" stroke-width="2" fill="none" stroke-linecap="round"/>
+  
+  <!-- Paint palette in hand -->
+  <g transform="translate(35, 85)">
+    <ellipse cx="0" cy="0" rx="8" ry="6" fill="#f3f4f6"/>
+    <circle cx="-3" cy="-2" r="1.5" fill="#ec4899"/>
+    <circle cx="2" cy="-1" r="1" fill="#3b82f6"/>
+    <circle cx="-1" cy="2" r="1" fill="#fbbf24"/>
+  </g>
+  
+  <!-- Paintbrush -->
+  <g transform="translate(42, 78)">
+    <rect x="0" y="0" width="12" height="1.5" fill="#92400e"/>
+    <rect x="12" y="-1" width="4" height="3.5" fill="#6b7280"/>
+  </g>
+  
+  <!-- Creative sparkles -->
+  <g fill="#ec4899">
+    <polygon points="25,30 27,35 32,33 27,38 25,43 23,38 18,33 23,35"/>
+    <polygon points="95,25 96,28 99,27 96,30 95,33 94,30 91,27 94,28"/>
+    <polygon points="100,70 101,72 103,71 101,73 100,75 99,73 97,71 99,72"/>
+    <polygon points="20,85 21,87 23,86 21,88 20,90 19,88 17,86 19,87"/>
+  </g>
+  
+  <!-- Paint dots -->
+  <g fill="#ec4899" opacity="0.6">
+    <circle cx="85" cy="85" r="1"/>
+    <circle cx="90" cy="90" r="0.5"/>
+    <circle cx="82" cy="92" r="0.8"/>
+  </g>
+</svg>

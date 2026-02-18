@@ -1,0 +1,42 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="64" cy="64" r="64" fill="#f59e0b" opacity="0.15"/>
+  
+  <!-- Paladin helmet -->
+  <path d="M38 40 Q38 25 64 25 Q90 25 90 40 L90 85 Q90 95 78 100 L50 100 Q38 95 38 85 Z" fill="#f59e0b"/>
+  
+  <!-- Helmet highlight -->
+  <path d="M42 42 Q42 30 64 30 Q86 30 86 42 L86 55 Q86 48 64 48 Q42 48 42 55 Z" fill="#fbbf24"/>
+  
+  <!-- Face guard with cross pattern -->
+  <rect x="48" y="55" width="32" height="25" rx="2" fill="#d97706"/>
+  <rect x="63" y="55" width="2" height="25" fill="#451a03"/>
+  <rect x="48" y="66.5" width="32" height="2" fill="#451a03"/>
+  
+  <!-- Lock symbol on forehead -->
+  <g transform="translate(64, 45)">
+    <rect x="-4" y="-2" width="8" height="6" rx="1" fill="#d97706"/>
+    <path d="M-2 -5 Q-2 -7 0 -7 Q2 -7 2 -5" stroke="#451a03" stroke-width="1.5" fill="none"/>
+    <circle cx="0" cy="1" r="1" fill="#451a03"/>
+  </g>
+  
+  <!-- Key emblem on chest -->
+  <g transform="translate(64, 88)" fill="#f59e0b">
+    <rect x="-1" y="-6" width="2" height="12" rx="1"/>
+    <circle cx="0" cy="-6" r="3" fill="none" stroke="#f59e0b" stroke-width="1.5"/>
+    <rect x="1" y="2" width="3" height="1"/>
+    <rect x="1" y="4" width="2" height="1"/>
+  </g>
+  
+  <!-- Shoulder guards -->
+  <ellipse cx="45" cy="75" rx="10" ry="8" fill="#d97706"/>
+  <ellipse cx="83" cy="75" rx="10" ry="8" fill="#d97706"/>
+  
+  <!-- Protective aura shimmer -->
+  <g fill="#fbbf24" opacity="0.3">
+    <circle cx="35" cy="50" r="1"/>
+    <circle cx="93" cy="55" r="1.5"/>
+    <circle cx="30" cy="80" r="1"/>
+    <circle cx="98" cy="75" r="1"/>
+  </g>
+</svg>

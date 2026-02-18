@@ -1,0 +1,43 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="64" cy="64" r="64" fill="#22c55e" opacity="0.15"/>
+  
+  <!-- Warlock hood -->
+  <path d="M25 35 Q30 15 64 15 Q98 15 103 35 L98 70 Q95 85 88 95 L40 95 Q33 85 30 70 Z" fill="#22c55e"/>
+  
+  <!-- Hood inner shadow -->
+  <path d="M32 40 Q37 25 64 25 Q91 25 96 40 L92 55 Q87 40 64 40 Q41 40 36 55 Z" fill="#16a34a"/>
+  
+  <!-- Deep hood shadow for mysterious face -->
+  <ellipse cx="64" cy="65" rx="20" ry="22" fill="#0f172a"/>
+  
+  <!-- Electric glowing eyes -->
+  <circle cx="57" cy="62" r="3" fill="#22c55e"/>
+  <circle cx="71" cy="62" r="3" fill="#22c55e"/>
+  <circle cx="57" cy="62" r="1" fill="#dcfce7"/>
+  <circle cx="71" cy="62" r="1" fill="#dcfce7"/>
+  
+  <!-- Lightning bolts emanating from hands -->
+  <g fill="#22c55e">
+    <!-- Left lightning -->
+    <polygon points="35,75 40,70 37,78 42,73 38,82 45,78 40,85"/>
+    <!-- Right lightning -->
+    <polygon points="93,75 88,70 91,78 86,73 90,82 83,78 88,85"/>
+    <!-- Center lightning -->
+    <polygon points="64,95 67,88 62,93 68,85 63,90 70,82 65,88"/>
+  </g>
+  
+  <!-- Electric aura -->
+  <g fill="#22c55e" opacity="0.4">
+    <circle cx="30" cy="45" r="1.5"/>
+    <circle cx="98" cy="50" r="2"/>
+    <circle cx="25" cy="75" r="1"/>
+    <circle cx="103" cy="80" r="1.5"/>
+  </g>
+  
+  <!-- Energy lines -->
+  <g stroke="#22c55e" stroke-width="1" opacity="0.7">
+    <path d="M45 85 Q50 80 55 85"/>
+    <path d="M73 85 Q78 80 83 85"/>
+  </g>
+</svg>

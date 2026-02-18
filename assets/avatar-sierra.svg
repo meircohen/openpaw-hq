@@ -1,0 +1,38 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="64" cy="64" r="64" fill="#06b6d4" opacity="0.15"/>
+  
+  <!-- Hood -->
+  <path d="M30 40 Q35 20 64 20 Q93 20 98 40 L95 75 Q90 85 85 90 L43 90 Q38 85 33 75 Z" fill="#06b6d4"/>
+  
+  <!-- Hood shadow -->
+  <path d="M35 45 Q40 30 64 30 Q88 30 93 45 L90 60 Q85 50 64 50 Q43 50 38 60 Z" fill="#0891b2"/>
+  
+  <!-- Face in shadow -->
+  <ellipse cx="64" cy="70" rx="18" ry="20" fill="#475569"/>
+  
+  <!-- Glowing eyes -->
+  <circle cx="58" cy="65" r="2" fill="#06b6d4"/>
+  <circle cx="70" cy="65" r="2" fill="#06b6d4"/>
+  
+  <!-- Swift bird emblem on chest -->
+  <g transform="translate(64, 85)">
+    <path d="M-8 0 Q-5 -5 0 -3 Q5 -5 8 0 Q5 5 0 3 Q-5 5 -8 0" fill="#06b6d4"/>
+    <circle cx="-2" cy="-1" r="1" fill="white"/>
+    <!-- Wing lines -->
+    <line x1="-6" y1="-2" x2="-10" y2="-4" stroke="#67e8f9" stroke-width="1"/>
+    <line x1="6" y1="-2" x2="10" y2="-4" stroke="#67e8f9" stroke-width="1"/>
+  </g>
+  
+  <!-- Hood drawstrings -->
+  <line x1="55" y1="45" x2="50" y2="50" stroke="#0891b2" stroke-width="2"/>
+  <line x1="73" y1="45" x2="78" y2="50" stroke="#0891b2" stroke-width="2"/>
+  
+  <!-- Swift motion lines -->
+  <g stroke="#06b6d4" stroke-width="1" opacity="0.6">
+    <line x1="20" y1="30" x2="25" y2="35"/>
+    <line x1="25" y1="25" x2="30" y2="30"/>
+    <line x1="98" y1="35" x2="103" y2="30"/>
+    <line x1="103" y1="40" x2="108" y2="35"/>
+  </g>
+</svg>

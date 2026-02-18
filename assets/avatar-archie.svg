@@ -1,0 +1,30 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="64" cy="64" r="64" fill="#3b82f6" opacity="0.15"/>
+  
+  <!-- Knight helmet base -->
+  <path d="M35 45 Q35 25 64 25 Q93 25 93 45 L93 85 Q93 100 64 100 Q35 100 35 85 Z" fill="#3b82f6"/>
+  
+  <!-- Helmet highlight -->
+  <path d="M40 40 Q45 30 64 30 Q83 30 88 40 L88 50 Q88 45 64 45 Q40 45 40 50 Z" fill="#60a5fa"/>
+  
+  <!-- Visor slit -->
+  <rect x="45" y="55" width="38" height="6" rx="3" fill="#1e293b"/>
+  
+  <!-- Visor glow -->
+  <rect x="47" y="57" width="34" height="2" fill="#3b82f6" opacity="0.8"/>
+  
+  <!-- Neck guard -->
+  <rect x="50" y="90" width="28" height="12" rx="4" fill="#1d4ed8"/>
+  
+  <!-- Helmet crest -->
+  <polygon points="64,15 60,25 68,25" fill="#60a5fa"/>
+  
+  <!-- Side guards -->
+  <ellipse cx="40" cy="70" rx="8" ry="15" fill="#1d4ed8"/>
+  <ellipse cx="88" cy="70" rx="8" ry="15" fill="#1d4ed8"/>
+  
+  <!-- Decorative rivets -->
+  <circle cx="50" cy="75" r="2" fill="#93c5fd"/>
+  <circle cx="78" cy="75" r="2" fill="#93c5fd"/>
+</svg>

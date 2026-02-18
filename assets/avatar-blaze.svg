@@ -1,0 +1,48 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="64" cy="64" r="64" fill="#FF6B4A" opacity="0.15"/>
+  
+  <!-- Flame aura base -->
+  <path d="M30 90 Q25 60 35 45 Q40 30 50 25 Q55 15 64 20 Q73 15 78 25 Q88 30 93 45 Q103 60 98 90 Z" fill="#FF6B4A"/>
+  
+  <!-- Inner flame layers -->
+  <path d="M35 85 Q32 65 40 50 Q45 35 55 32 Q60 25 64 28 Q68 25 73 32 Q83 35 88 50 Q96 65 93 85 Z" fill="#ff8b5a"/>
+  <path d="M40 80 Q38 68 44 55 Q48 45 58 42 Q62 38 64 40 Q66 38 70 42 Q80 45 84 55 Q90 68 88 80 Z" fill="#ffb085"/>
+  
+  <!-- Face -->
+  <circle cx="64" cy="68" r="18" fill="#fbbf24"/>
+  
+  <!-- Fiery hair -->
+  <g fill="#FF6B4A">
+    <path d="M46 55 Q48 45 52 50 Q50 42 56 48 Q58 38 62 45"/>
+    <path d="M82 55 Q80 45 76 50 Q78 42 72 48 Q70 38 66 45"/>
+    <path d="M64 40 Q68 35 66 45 Q72 30 70 40"/>
+  </g>
+  
+  <!-- Intense eyes -->
+  <circle cx="58" cy="65" r="3" fill="#dc2626"/>
+  <circle cx="70" cy="65" r="3" fill="#dc2626"/>
+  <circle cx="58" cy="64" r="1.5" fill="#fbbf24"/>
+  <circle cx="70" cy="64" r="1.5" fill="#fbbf24"/>
+  
+  <!-- Determined expression -->
+  <path d="M56 75 L72 75" stroke="#dc2626" stroke-width="2" stroke-linecap="round"/>
+  
+  <!-- Flame wisps -->
+  <g fill="#FF6B4A" opacity="0.7">
+    <path d="M25 40 Q20 35 25 30 Q30 35 28 40"/>
+    <path d="M103 35 Q108 30 103 25 Q98 30 100 35"/>
+    <path d="M20 70 Q15 65 20 60 Q25 65 23 70"/>
+    <path d="M108 75 Q113 70 108 65 Q103 70 105 75"/>
+  </g>
+  
+  <!-- Fire sparks -->
+  <g fill="#FFB8A3">
+    <circle cx="30" cy="35" r="1"/>
+    <circle cx="98" cy="30" r="1.5"/>
+    <circle cx="25" cy="75" r="1"/>
+    <circle cx="103" cy="80" r="1"/>
+    <circle cx="35" cy="25" r="0.5"/>
+    <circle cx="93" cy="85" r="0.8"/>
+  </g>
+</svg>
