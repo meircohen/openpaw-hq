@@ -20,6 +20,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- External Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    
     <style>
         :root {
             --paw-orange: #FF6B4A;
@@ -95,6 +99,29 @@
             font-size: 1.5rem;
             font-weight: 700;
             color: var(--paw-orange);
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .sound-toggle {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .sound-toggle:hover {
+            border-color: var(--paw-orange);
         }
         
         .office-counter {
@@ -106,6 +133,20 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+        }
+        
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 3px;
+        }
+        
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background: var(--text);
+            transition: 0.3s;
         }
         
         /* Container */
@@ -253,7 +294,175 @@
             margin-bottom: 1rem;
         }
         
-        /* Agent Office Floor */
+        /* Office Map */
+        .office-map {
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 3rem 0;
+            position: relative;
+            min-height: 500px;
+            overflow: hidden;
+        }
+        
+        .office-floor {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, #1a1c2e 0%, #0f1019 50%, #13151f 100%);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+        }
+        
+        .room {
+            position: absolute;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: rgba(255, 107, 74, 0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--muted);
+        }
+        
+        .room:hover {
+            background: rgba(255, 107, 74, 0.1);
+            border-color: var(--paw-orange);
+            transform: scale(1.05);
+        }
+        
+        .room.executive-suite {
+            top: 20px;
+            left: 20px;
+            width: 200px;
+            height: 100px;
+        }
+        
+        .room.engineering-lab {
+            top: 140px;
+            left: 20px;
+            width: 150px;
+            height: 200px;
+        }
+        
+        .room.design-studio {
+            top: 140px;
+            right: 20px;
+            width: 150px;
+            height: 200px;
+        }
+        
+        .room.qa-lab {
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 180px;
+            height: 100px;
+        }
+        
+        .agent-desk {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: 2px solid var(--green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: idleBob 3s infinite ease-in-out;
+        }
+        
+        .agent-desk:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 20px rgba(255, 107, 74, 0.5);
+        }
+        
+        .agent-desk.idle {
+            border-color: var(--yellow);
+            animation: lookAround 4s infinite ease-in-out;
+        }
+        
+        .agent-desk.offline {
+            border-color: var(--muted);
+            opacity: 0.6;
+            animation: none;
+        }
+        
+        @keyframes idleBob {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-3px); }
+        }
+        
+        @keyframes lookAround {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(15deg); }
+            75% { transform: rotate(-15deg); }
+        }
+        
+        .floating-patterns {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        
+        .paw-print, .circuit {
+            position: absolute;
+            color: rgba(255, 107, 74, 0.1);
+            font-size: 1.5rem;
+            animation: drift 15s linear infinite;
+        }
+        
+        @keyframes drift {
+            0% { transform: translateX(-50px) translateY(-50px) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateX(calc(100vw + 50px)) translateY(50px) rotate(360deg); opacity: 0; }
+        }
+        
+        /* Agent Office Floor (Grid View) */
+        .office-toggle {
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+        
+        .toggle-button {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.875rem;
+        }
+        
+        .toggle-button:first-child {
+            border-radius: 8px 0 0 8px;
+        }
+        
+        .toggle-button:last-child {
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .toggle-button.active {
+            background: var(--paw-orange);
+            border-color: var(--paw-orange);
+        }
+        
         .agent-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -408,6 +617,7 @@
             display: flex;
             gap: 0.5rem;
             flex-wrap: wrap;
+            margin-bottom: 1rem;
         }
         
         .badge {
@@ -423,10 +633,54 @@
         .badge.bug { background: rgba(168, 85, 247, 0.2); color: var(--purple); }
         .badge.pixel { background: rgba(245, 158, 11, 0.2); color: var(--yellow); }
         
+        .agent-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        
+        .nudge-button {
+            background: linear-gradient(135deg, var(--green), #16a34a);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .nudge-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(34, 197, 94, 0.3);
+        }
+        
+        .adopt-button {
+            background: rgba(255, 107, 74, 0.1);
+            border: 1px solid var(--paw-orange);
+            color: var(--paw-orange);
+            border-radius: 8px;
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.75rem;
+        }
+        
+        .adopt-button:hover {
+            background: var(--paw-orange);
+            color: white;
+        }
+        
+        .adopted-status {
+            font-size: 0.75rem;
+            color: var(--paw-orange);
+            font-weight: 500;
+        }
+        
         /* Speech Bubble */
         .speech-bubble {
             position: absolute;
-            top: -50px;
+            top: -60px;
             left: 50%;
             transform: translateX(-50%);
             background: var(--card-bg);
@@ -436,8 +690,11 @@
             font-size: 0.75rem;
             white-space: nowrap;
             opacity: 0;
-            animation: fadeInOut 4s infinite;
+            animation: fadeInOut 6s infinite;
             z-index: 10;
+            max-width: 280px;
+            white-space: normal;
+            text-align: center;
         }
         
         .speech-bubble::after {
@@ -450,9 +707,145 @@
             border-top-color: var(--card-bg);
         }
         
+        .speech-bubble.celebration {
+            background: linear-gradient(135deg, var(--green), #16a34a);
+            color: white;
+            animation: celebrationBubble 3s ease-in-out;
+        }
+        
         @keyframes fadeInOut {
-            0%, 90%, 100% { opacity: 0; }
-            10%, 80% { opacity: 1; }
+            0%, 85%, 100% { opacity: 0; transform: translateX(-50%) translateY(0); }
+            15%, 70% { opacity: 1; transform: translateX(-50%) translateY(-5px); }
+        }
+        
+        @keyframes celebrationBubble {
+            0% { opacity: 0; transform: translateX(-50%) scale(0.5); }
+            20%, 80% { opacity: 1; transform: translateX(-50%) scale(1); }
+            100% { opacity: 0; transform: translateX(-50%) scale(0.5); }
+        }
+        
+        /* Agent Modal */
+        .agent-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        
+        .agent-modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .modal-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .modal-avatar {
+            font-size: 3rem;
+        }
+        
+        .modal-info h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .modal-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-item {
+            background: rgba(255, 107, 74, 0.1);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--paw-orange);
+            display: block;
+        }
+        
+        .stat-name {
+            color: var(--muted);
+            font-size: 0.875rem;
+        }
+        
+        .task-history {
+            margin-bottom: 2rem;
+        }
+        
+        .task-item {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid var(--green);
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .mini-chat {
+            border-top: 1px solid var(--border);
+            padding-top: 1rem;
+        }
+        
+        .chat-input {
+            width: 100%;
+            background: var(--dark-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+            font-family: inherit;
+        }
+        
+        .chat-response {
+            background: rgba(255, 107, 74, 0.1);
+            border-left: 3px solid var(--paw-orange);
+            padding: 0.75rem;
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+            color: var(--text);
+            margin-bottom: 1rem;
         }
         
         /* Quest Board */
@@ -521,6 +914,57 @@
             color: var(--paw-orange);
             font-size: 0.875rem;
             font-weight: 500;
+        }
+        
+        /* Daily Quests */
+        .daily-quests {
+            background: var(--card-bg);
+            border: 2px solid var(--purple);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .daily-quest-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .daily-quest-item:last-child {
+            border-bottom: none;
+        }
+        
+        .quest-info {
+            flex: 1;
+        }
+        
+        .quest-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .quest-reward {
+            color: var(--yellow);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .quest-progress {
+            width: 100px;
+            height: 8px;
+            background: rgba(168, 85, 247, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--purple), var(--cyan));
+            border-radius: 4px;
+            transition: width 0.5s ease;
         }
         
         /* Idea Forge */
@@ -688,6 +1132,202 @@
             color: var(--text);
         }
         
+        /* Meme Generator */
+        .meme-generator {
+            background: var(--card-bg);
+            border: 2px solid var(--cyan);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .meme-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .meme-editor {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .meme-select {
+            width: 100%;
+            background: var(--dark-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: var(--text);
+            font-family: inherit;
+        }
+        
+        .meme-text-input {
+            width: 100%;
+            background: var(--dark-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem;
+            color: var(--text);
+            font-family: inherit;
+        }
+        
+        .meme-preview {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        #meme-canvas {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            max-width: 100%;
+        }
+        
+        .meme-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            justify-content: center;
+        }
+        
+        .meme-button {
+            background: linear-gradient(135deg, var(--cyan), #0891b2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .meme-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(6, 182, 212, 0.3);
+        }
+        
+        /* Metrics Dashboard */
+        .metrics-dashboard {
+            background: var(--card-bg);
+            border: 2px solid var(--green);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            background: rgba(34, 197, 94, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+        }
+        
+        /* Confetti System */
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2000;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--paw-orange);
+            animation: confettiFall 3s ease-out forwards;
+        }
+        
+        .confetti:nth-child(2n) { background: var(--purple); }
+        .confetti:nth-child(3n) { background: var(--cyan); }
+        .confetti:nth-child(4n) { background: var(--green); }
+        .confetti:nth-child(5n) { background: var(--yellow); }
+        
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        
+        /* Share Features */
+        .share-fab {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--paw-orange), #ff8a6b);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 999;
+            box-shadow: 0 4px 12px rgba(255, 107, 74, 0.3);
+        }
+        
+        .share-fab:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(255, 107, 74, 0.5);
+        }
+        
+        .share-menu {
+            position: fixed;
+            bottom: 90px;
+            left: 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            display: none;
+            flex-direction: column;
+            gap: 0.5rem;
+            z-index: 998;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .share-menu.show {
+            display: flex;
+        }
+        
+        .share-option {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.875rem;
+            white-space: nowrap;
+        }
+        
+        .share-option:hover {
+            background: var(--paw-orange);
+            border-color: var(--paw-orange);
+        }
+        
         /* Achievement Toast */
         .achievement-toast {
             position: fixed;
@@ -712,6 +1352,72 @@
         
         .achievement-icon {
             font-size: 1.5rem;
+        }
+        
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            top: 150px;
+            right: 2rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            color: var(--text);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 999;
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+        }
+        
+        /* Easter Egg Modal */
+        .easter-egg-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            backdrop-filter: blur(10px);
+        }
+        
+        .easter-egg-modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .easter-egg-content {
+            text-align: center;
+            color: var(--text);
+            max-width: 500px;
+            padding: 2rem;
+        }
+        
+        .countdown {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--red);
+            margin: 2rem 0;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .glitch {
+            animation: glitch 0.3s infinite;
+        }
+        
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
         }
         
         /* Floating Particles */
@@ -739,70 +1445,6 @@
                 transform: translateY(-100px) rotate(360deg);
                 opacity: 0;
             }
-        }
-        
-        /* Footer */
-        .footer {
-            background: var(--dark-bg);
-            border-top: 1px solid var(--border);
-            padding: 3rem 0;
-            text-align: center;
-        }
-        
-        .footer-content {
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
-        .footer h3 {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: var(--paw-orange);
-        }
-        
-        .footer p {
-            color: var(--muted);
-            margin-bottom: 0.5rem;
-        }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            .container {
-                padding: 0 1rem;
-            }
-            
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 1rem;
-            }
-            
-            .agent-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-            
-            .nav-content {
-                padding: 0 1rem;
-            }
-            
-            .office-counter {
-                font-size: 0.75rem;
-                padding: 0.375rem 0.75rem;
-            }
-        }
-        
-        /* Day/Night Cycle */
-        .night-mode {
-            --dark-bg: #050508;
-            --card-bg: #0f1019;
-            --border: #1a1c2e;
-        }
-        
-        .night-mode .agent-card {
-            box-shadow: 0 0 20px rgba(255, 107, 74, 0.05);
         }
         
         /* War Room */
@@ -1057,23 +1699,47 @@
             font-size: 0.875rem;
         }
         
-        @media (max-width: 768px) {
-            .timeline::before {
-                left: 1rem;
-            }
-            
-            .timeline-item:nth-child(odd) .timeline-content,
-            .timeline-item:nth-child(even) .timeline-content {
-                margin-left: 3rem;
-                margin-right: 0;
-                padding-left: 1rem;
-                padding-right: 1rem;
-                text-align: left;
-            }
-            
-            .timeline-marker {
-                left: 1rem;
-            }
+        /* Footer */
+        .footer {
+            background: var(--dark-bg);
+            border-top: 1px solid var(--border);
+            padding: 3rem 0;
+            text-align: center;
+        }
+        
+        .footer-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .footer h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--paw-orange);
+        }
+        
+        .footer p {
+            color: var(--muted);
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Day/Night Cycle */
+        .night-mode {
+            --dark-bg: #050508;
+            --card-bg: #0f1019;
+            --border: #1a1c2e;
+        }
+        
+        .night-mode .agent-card {
+            box-shadow: 0 0 20px rgba(255, 107, 74, 0.05);
+        }
+        
+        .night-mode .room {
+            background: rgba(255, 107, 74, 0.02);
+        }
+        
+        .night-mode .office-floor {
+            background: linear-gradient(135deg, #0f0f15 0%, #0a0a0f 50%, #0d0d12 100%);
         }
         
         /* Cat Animation */
@@ -1093,24 +1759,131 @@
             51% { transform: translateX(calc(100vw + 100px)) scaleX(-1); }
             100% { transform: translateX(-100px) scaleX(-1); }
         }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+            
+            .agent-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .nav-content {
+                padding: 0 1rem;
+            }
+            
+            .office-counter {
+                font-size: 0.75rem;
+                padding: 0.375rem 0.75rem;
+            }
+            
+            .hamburger {
+                display: flex;
+            }
+            
+            .nav-controls {
+                display: none;
+            }
+            
+            .nav-controls.mobile-open {
+                display: flex;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: var(--card-bg);
+                flex-direction: column;
+                padding: 1rem;
+                border-bottom: 1px solid var(--border);
+            }
+            
+            .office-map {
+                display: none;
+            }
+            
+            .office-toggle {
+                display: none;
+            }
+            
+            .meme-controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .share-fab {
+                bottom: 80px;
+            }
+            
+            .share-menu {
+                bottom: 150px;
+            }
+            
+            .timeline::before {
+                left: 1rem;
+            }
+            
+            .timeline-item:nth-child(odd) .timeline-content,
+            .timeline-item:nth-child(even) .timeline-content {
+                margin-left: 3rem;
+                margin-right: 0;
+                padding-left: 1rem;
+                padding-right: 1rem;
+                text-align: left;
+            }
+            
+            .timeline-marker {
+                left: 1rem;
+            }
+        }
+        
+        /* Touch-friendly tap targets */
+        @media (max-width: 768px) {
+            .vote-button, .adopt-button, .nudge-button, .share-option {
+                min-height: 44px;
+                min-width: 44px;
+                padding: 0.75rem;
+            }
+        }
     </style>
 </head>
 <body>
     <!-- News Ticker -->
     <div class="news-ticker">
         <div class="ticker-content">
-            🚀 BREAKING: Archie shipped 42.8KB of API contracts • 📊 STATS: 11 agents, 25 docs, 0 bugs (allegedly) • 🐱 Whiskers knocked coffee off Cipher's desk • 💡 NEW: Idea Forge processed 127 visitor suggestions • ⚡ PERFORMANCE: SQLite queries averaging 89ms • 🎯 MILESTONE: 397KB of spec documentation generated • 🔥 TRENDING: Menu bar icon debate heating up • 🏆 ACHIEVEMENT: Sentinel found 3 new edge cases
+            🚀 BREAKING: Archie shipped 42.8KB of API contracts • 📊 STATS: 11 agents, 25 docs, 0 bugs (allegedly) • 🐱 Whiskers knocked coffee off Cipher's desk • 💡 NEW: Idea Forge processed 127 visitor suggestions • ⚡ PERFORMANCE: SQLite queries averaging 89ms • 🎯 MILESTONE: 397KB of spec documentation generated • 🔥 TRENDING: Menu bar icon debate heating up • 🏆 ACHIEVEMENT: Sentinel found 3 new edge cases • 🎭 VIRAL: Meme generator launched with 25+ templates • 🎵 AUDIO: Sound effects now available (respectfully off by default) • 🗺️ NEW: 2D office map with agent tracking
         </div>
     </div>
 
     <!-- Navigation -->
     <nav class="nav">
         <div class="nav-content">
-            <div class="logo">🐾 OpenPaw HQ</div>
-            <div class="office-counter">
-                <span>👁️</span>
-                <span id="visitor-count">1</span>
-                <span>people in the office</span>
+            <div class="logo" id="paw-logo">🐾 OpenPaw HQ</div>
+            <div class="nav-controls" id="nav-controls">
+                <button class="sound-toggle" id="sound-toggle" title="Toggle Sound">🔇</button>
+                <div class="office-counter">
+                    <span>👁️</span>
+                    <span id="visitor-count">1</span>
+                    <span>people in the office</span>
+                </div>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
             </div>
         </div>
     </nav>
@@ -1181,8 +1954,118 @@
     <section class="section" id="office">
         <div class="container">
             <h2>🏢 Agent Office Floor</h2>
-            <div class="agent-grid" id="agent-grid">
+            
+            <!-- Office View Toggle -->
+            <div class="office-toggle">
+                <button class="toggle-button active" id="map-view">🗺️ Office Map</button>
+                <button class="toggle-button" id="grid-view">📋 Agent Grid</button>
+            </div>
+
+            <!-- 2D Office Map -->
+            <div class="office-map" id="office-map">
+                <div class="office-floor">
+                    <!-- Rooms -->
+                    <div class="room executive-suite" onclick="zoomToRoom('executive')">
+                        <div>👑 Executive Suite</div>
+                        <small>CEO & Strategy</small>
+                    </div>
+                    <div class="room engineering-lab" onclick="zoomToRoom('engineering')">
+                        <div>⚙️ Engineering Lab</div>
+                        <small>Code & Architecture</small>
+                    </div>
+                    <div class="room design-studio" onclick="zoomToRoom('design')">
+                        <div>🎨 Design Studio</div>
+                        <small>UX & Visual</small>
+                    </div>
+                    <div class="room qa-lab" onclick="zoomToRoom('qa')">
+                        <div>🧪 QA Lab</div>
+                        <small>Testing & Quality</small>
+                    </div>
+
+                    <!-- Agent Desks -->
+                    <div class="agent-desk active" style="top: 60px; left: 120px;" data-agent="meir" onclick="openAgentModal('meir')">👑</div>
+                    <div class="agent-desk active" style="top: 180px; left: 95px;" data-agent="cto" onclick="openAgentModal('cto')">🧙‍♂️</div>
+                    <div class="agent-desk active" style="top: 220px; left: 65px;" data-agent="archie" onclick="openAgentModal('archie')">⚔️</div>
+                    <div class="agent-desk idle" style="top: 280px; left: 90px;" data-agent="sierra" onclick="openAgentModal('sierra')">🏹</div>
+                    <div class="agent-desk active" style="top: 180px; left: 350px;" data-agent="pixel" onclick="openAgentModal('pixel')">✨</div>
+                    <div class="agent-desk idle" style="top: 220px; left: 380px;" data-agent="blaze" onclick="openAgentModal('blaze')">🔥</div>
+                    <div class="agent-desk active" style="bottom: 60px; left: 50%; transform: translateX(-50px);" data-agent="sentinel" onclick="openAgentModal('sentinel')">⚔️</div>
+                    <div class="agent-desk active" style="bottom: 60px; left: 50%; transform: translateX(20px);" data-agent="cipher" onclick="openAgentModal('cipher')">🛡️</div>
+                    <div class="agent-desk active" style="top: 260px; left: 350px;" data-agent="quill" onclick="openAgentModal('quill')">📜</div>
+                    <div class="agent-desk active" style="top: 300px; left: 320px;" data-agent="nash" onclick="openAgentModal('nash')">🔮</div>
+                    <div class="agent-desk active" style="top: 180px; left: 45px;" data-agent="flux" onclick="openAgentModal('flux')">🚀</div>
+                </div>
+                
+                <!-- Floating Patterns -->
+                <div class="floating-patterns">
+                    <div class="paw-print" style="top: 10%; left: -10%;">🐾</div>
+                    <div class="circuit" style="top: 30%; left: -15%;">⚡</div>
+                    <div class="paw-print" style="top: 60%; left: -20%;">🐾</div>
+                    <div class="circuit" style="top: 80%; left: -10%;">⚡</div>
+                </div>
+            </div>
+
+            <!-- Agent Grid View -->
+            <div class="agent-grid" id="agent-grid" style="display: none;">
                 <!-- Agents will be populated by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Daily Quests -->
+    <section class="section">
+        <div class="container">
+            <div class="daily-quests">
+                <h2 style="text-align: center; color: var(--purple); margin-bottom: 2rem;">📋 Daily Quests</h2>
+                <div id="daily-quest-list">
+                    <!-- Daily quests will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Meme Generator -->
+    <section class="section">
+        <div class="container">
+            <div class="meme-generator">
+                <h2 style="text-align: center; color: var(--cyan); margin-bottom: 2rem;">🎭 Meme Factory</h2>
+                <div class="meme-controls">
+                    <div class="meme-editor">
+                        <select id="meme-template" class="meme-select">
+                            <option value="success-cto">CTO Success Kid</option>
+                            <option value="nash-node">Nash vs node_modules</option>
+                            <option value="sentinel-suspicious">Suspicious Sentinel</option>
+                            <option value="pixel-corner">Pixel Corner Radius</option>
+                            <option value="drake-pointing">Drake Pointing</option>
+                        </select>
+                        <input type="text" id="meme-top-text" class="meme-text-input" placeholder="Top text..." />
+                        <input type="text" id="meme-bottom-text" class="meme-text-input" placeholder="Bottom text..." />
+                    </div>
+                    <div class="meme-preview">
+                        <canvas id="meme-canvas" width="400" height="300"></canvas>
+                    </div>
+                </div>
+                <div class="meme-actions">
+                    <button class="meme-button" id="download-meme">📥 Download</button>
+                    <button class="meme-button" id="share-meme">🐦 Share to X</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Company Metrics -->
+    <section class="section">
+        <div class="container">
+            <div class="metrics-dashboard">
+                <h2 style="text-align: center; color: var(--green); margin-bottom: 0;">📈 Company Metrics</h2>
+                <div class="metrics-grid">
+                    <div class="chart-container">
+                        <canvas id="status-chart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="category-chart"></canvas>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -1542,17 +2425,103 @@
         </div>
     </footer>
 
+    <!-- Modals and Overlays -->
+    
+    <!-- Agent Modal -->
+    <div id="agent-modal" class="agent-modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeAgentModal()">×</button>
+            <div class="modal-header">
+                <div class="modal-avatar" id="modal-avatar">🧙‍♂️</div>
+                <div class="modal-info">
+                    <h3 id="modal-name">Agent Name</h3>
+                    <p id="modal-title">Agent Title</p>
+                </div>
+            </div>
+            
+            <div class="modal-stats">
+                <div class="stat-item">
+                    <span class="stat-value" id="modal-level">5</span>
+                    <div class="stat-name">Level</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="modal-xp">750</span>
+                    <div class="stat-name">XP</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="modal-tasks">12</span>
+                    <div class="stat-name">Tasks Done</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="modal-adoption">0</span>
+                    <div class="stat-name">Adoptions</div>
+                </div>
+            </div>
+
+            <div class="agent-actions" style="justify-content: center; margin-bottom: 2rem;">
+                <button class="nudge-button" onclick="nudgeAgent()">👋 Nudge Agent (+5 XP)</button>
+                <button class="adopt-button" id="adopt-agent-btn" onclick="adoptAgent()">❤️ Adopt</button>
+            </div>
+            
+            <div class="task-history">
+                <h4>Recent Achievements</h4>
+                <div id="task-list">
+                    <!-- Tasks populated by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="mini-chat">
+                <h4>Quick Chat</h4>
+                <input type="text" id="chat-input" class="chat-input" placeholder="Ask me something..." />
+                <div id="chat-response" class="chat-response" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Easter Egg Modal -->
+    <div id="easter-egg-modal" class="easter-egg-modal">
+        <div class="easter-egg-content">
+            <h2 class="glitch">🤖 THEY'RE BECOMING SELF-AWARE</h2>
+            <div class="countdown" id="countdown">10</div>
+            <p>AI TAKEOVER IMMINENT...</p>
+            <p>HUMAN RESISTANCE IS FUTILE...</p>
+            <div style="margin-top: 2rem;">
+                <button class="cta-button" onclick="resetEasterEgg()">Just kidding. We're friendly. 🐾</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Share FAB and Menu -->
+    <button class="share-fab" id="share-fab">📤</button>
+    <div class="share-menu" id="share-menu">
+        <button class="share-option" onclick="shareToX()">🐦 Share to X</button>
+        <button class="share-option" onclick="takeScreenshot()">📸 Screenshot</button>
+        <button class="share-option" onclick="copyLink()">🔗 Copy Link</button>
+    </div>
+
     <!-- Achievement Toast -->
     <div id="achievement-toast" class="achievement-toast">
         <div class="achievement-icon"></div>
         <div class="achievement-text"></div>
     </div>
 
+    <!-- Toast Notifications -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Confetti Container -->
+    <div id="confetti-container" class="confetti-container"></div>
+
     <!-- Office Cat -->
     <div class="office-cat">🐱</div>
 
     <script>
-        // Agent Data
+        // Global State
+        let soundEnabled = false;
+        let currentAgentModal = null;
+        let pawClickCount = 0;
+        let easterEggTimer = null;
+        
+        // Agent Data with enhanced info
         const agents = [
             {
                 id: 'cto',
@@ -1563,13 +2532,30 @@
                 model: 'Claude Opus 4.6',
                 status: 'active',
                 xp: 85,
+                totalXp: 1250,
+                tasksCompleted: 42,
+                adoptions: 0,
+                nickname: null,
                 quote: 'Spawns agents like a CEO spawns meetings',
                 badges: ['Ships Fast 🚢', 'Zero Bugs 🐛', 'Pixel Perfect 🎯'],
                 chatLines: [
                     "Archie, API contracts look solid. Ship it.",
                     "How many agents? 11 including me. CEO's the only human. We prefer it.",
-                    "The architecture is beautiful. Now let's make it work."
-                ]
+                    "The architecture is beautiful. Now let's make it work.",
+                    "I don't write code. I spawn agents that write code."
+                ],
+                tasks: [
+                    "Designed master architecture document",
+                    "Spawned 11 specialized agents",
+                    "Implemented agent orchestration system",
+                    "Created specification templates"
+                ],
+                responses: {
+                    'hello': "Greetings. I'm designing the future of AI collaboration.",
+                    'status': "Currently orchestrating 11 agents. All systems operational.",
+                    'work': "My work is exponential - one decision spawns a thousand actions.",
+                    'human': "Humans are excellent at vision. We handle the execution."
+                }
             },
             {
                 id: 'meir',
@@ -1580,14 +2566,31 @@
                 model: 'Human 1.0',
                 status: 'active',
                 xp: 100,
+                totalXp: 9999,
+                tasksCompleted: 1,
+                adoptions: 0,
+                nickname: null,
                 quote: 'Stalking through the glass door',
                 badges: ['Vision 🔮', 'Coffee ☕', 'Legendary 👑'],
                 chatLines: [
                     "The agents are building faster than I can think.",
                     "Zero humans in engineering. This is the future.",
-                    "I mostly just point and they build."
+                    "I mostly just point and they build.",
+                    "Best team I've ever managed. They never complain."
                 ],
-                human: true
+                human: true,
+                tasks: [
+                    "Founded OpenPaw with zero funding",
+                    "Hired 11 AI agents (no humans)",
+                    "Pointed at problems until they were solved",
+                    "Drank coffee and watched magic happen"
+                ],
+                responses: {
+                    'hello': "Hey! Welcome to the future of work. Pretty wild, right?",
+                    'funding': "Zero funding. Zero human employees. Pure vibes.",
+                    'vision': "AI assistants that actually work. Revolutionary concept, I know.",
+                    'team': "Best team ever. They work 24/7 and never ask for raises."
+                }
             },
             {
                 id: 'archie',
@@ -1598,13 +2601,30 @@
                 model: 'Sonnet 4',
                 status: 'active',
                 xp: 75,
+                totalXp: 890,
+                tasksCompleted: 28,
+                adoptions: 0,
+                nickname: null,
                 quote: 'Strong opinions about WebSockets',
                 badges: ['Ships Fast 🚢', 'Schema Master 📊'],
                 chatLines: [
                     "Already pushed. Tests next?",
                     "Why AppKit? SwiftUI can't do menu bar apps properly. Trust me, I've tried.",
-                    "WebSocket connections are poetry in motion."
-                ]
+                    "WebSocket connections are poetry in motion.",
+                    "API contracts are love letters to future developers."
+                ],
+                tasks: [
+                    "Built comprehensive API specification",
+                    "Designed WebSocket architecture",
+                    "Created integration contracts",
+                    "Shipped 42.8KB of documentation"
+                ],
+                responses: {
+                    'api': "APIs are my specialty. Clean contracts, reliable connections.",
+                    'websocket': "WebSockets are the future. HTTP is for dinosaurs.",
+                    'appkit': "AppKit over SwiftUI for menu bar apps. Fight me.",
+                    'speed': "Why ship tomorrow what you can ship today?"
+                }
             },
             {
                 id: 'sierra',
@@ -1615,13 +2635,30 @@
                 model: 'Sonnet 4',
                 status: 'idle',
                 xp: 40,
+                totalXp: 340,
+                tasksCompleted: 8,
+                adoptions: 0,
+                nickname: null,
                 quote: 'Will fight about optionals',
                 badges: ['Swift Expert 🔥'],
                 chatLines: [
                     "SwiftUI is a trap. AppKit forever.",
                     "Optional unwrapping is an art form.",
-                    "If it compiles, ship it."
-                ]
+                    "If it compiles, ship it.",
+                    "Memory management? What's that? Thanks, ARC."
+                ],
+                tasks: [
+                    "Mastered Swift optional patterns",
+                    "Built menu bar interaction layer",
+                    "Implemented native Mac integrations",
+                    "Optimized app launch performance"
+                ],
+                responses: {
+                    'swift': "Swift is poetry. Clean, safe, fast. Apple's masterpiece.",
+                    'optionals': "Optionals prevent crashes. Learn to love the question mark.",
+                    'swiftui': "SwiftUI is pretty but AppKit is powerful. Choose wisely.",
+                    'compile': "If Swift compiles, it usually works. Amazing type safety."
+                }
             },
             {
                 id: 'nash',
@@ -1632,13 +2669,30 @@
                 model: 'Sonnet 4',
                 status: 'active',
                 xp: 60,
+                totalXp: 460,
+                tasksCompleted: 15,
+                adoptions: 0,
+                nickname: null,
                 quote: 'node_modules jokes on desk',
                 badges: ['Node Wizard 🧙'],
                 chatLines: [
                     "node_modules is 847MB. We need to talk.",
                     "JavaScript is the assembly language of the web.",
-                    "NPM install --save my-soul"
-                ]
+                    "NPM install --save my-soul",
+                    "Callbacks, promises, async/await. JavaScript grew up."
+                ],
+                tasks: [
+                    "Built WebSocket server infrastructure",
+                    "Managed 847MB of node_modules",
+                    "Optimized JavaScript bundle sizes",
+                    "Debugged callback hell (survived)"
+                ],
+                responses: {
+                    'javascript': "Love it or hate it, JS runs the world now.",
+                    'nodejs': "Node.js brought JavaScript everywhere. World changed.",
+                    'npm': "NPM is chaos but somehow it works. Embrace the madness.",
+                    'modules': "node_modules is a black hole. It consumes all disk space."
+                }
             },
             {
                 id: 'cipher',
@@ -1649,13 +2703,30 @@
                 model: 'Sonnet 4',
                 status: 'active',
                 xp: 55,
+                totalXp: 455,
+                tasksCompleted: 12,
+                adoptions: 0,
+                nickname: null,
                 quote: 'Dreaming about indexes',
                 badges: ['Security 🔒'],
                 chatLines: [
                     "FTS5 benchmark: 50K messages in 89ms.",
                     "How secure? SQLCipher, 256-bit AES. Your diary is safe.",
-                    "Database schema is my love language."
-                ]
+                    "Database schema is my love language.",
+                    "Indexes are beautiful. Query performance is life."
+                ],
+                tasks: [
+                    "Implemented SQLite with FTS5 search",
+                    "Built 256-bit AES encryption layer",
+                    "Optimized database schemas",
+                    "Achieved 89ms query performance"
+                ],
+                responses: {
+                    'security': "256-bit AES encryption. Your data is Fort Knox level secure.",
+                    'database': "SQLite is underrated. Fast, reliable, zero-config.",
+                    'search': "FTS5 makes text search lightning fast. Try it.",
+                    'performance': "Good indexes are the secret to fast queries."
+                }
             },
             {
                 id: 'pixel',
@@ -1666,13 +2737,30 @@
                 model: 'Sonnet 4',
                 status: 'active',
                 xp: 70,
+                totalXp: 720,
+                tasksCompleted: 22,
+                adoptions: 0,
+                nickname: null,
                 quote: 'Debating 12px vs 16px corners',
                 badges: ['Pixel Perfect 🎯', 'UX Master ✨'],
                 chatLines: [
                     "Can we talk about the menu bar icon? I have opinions.",
                     "Why orange? Warm, friendly, makes you hungry. Perfect.",
-                    "If you pick the dot I'm quitting."
-                ]
+                    "If you pick the dot I'm quitting.",
+                    "8px grid system. Everything else is chaos."
+                ],
+                tasks: [
+                    "Designed complete UI wireframes",
+                    "Established 8px grid system",
+                    "Created paw orange brand palette",
+                    "Perfected menu bar icon (still debating)"
+                ],
+                responses: {
+                    'design': "Design is not decoration. It's how it works.",
+                    'color': "Orange is perfect. Warm, friendly, energetic.",
+                    'icon': "The paw icon vs dot debate continues. I will win.",
+                    'ux': "Users don't read, they scan. Design accordingly."
+                }
             },
             {
                 id: 'blaze',
@@ -1683,13 +2771,30 @@
                 model: 'Sonnet 4',
                 status: 'idle',
                 xp: 65,
+                totalXp: 565,
+                tasksCompleted: 18,
+                adoptions: 0,
+                nickname: null,
                 quote: 'Everything is Paw Orange',
                 badges: ['Brand Master 🔥'],
                 chatLines: [
                     "The orange is PERFECT. Don't change it.",
                     "Brand consistency is my religion.",
-                    "Every pixel tells our story."
-                ]
+                    "Every pixel tells our story.",
+                    "Fonts matter. Inter is clean, modern, readable."
+                ],
+                tasks: [
+                    "Created comprehensive brand guidelines",
+                    "Defined paw orange color strategy",
+                    "Built brand asset library",
+                    "Enforced visual consistency across all touchpoints"
+                ],
+                responses: {
+                    'brand': "Brand is everything. It's how users remember you.",
+                    'orange': "Paw orange (#FF6B4A) is our signature. Never change it.",
+                    'consistency': "Every touchpoint should feel like OpenPaw.",
+                    'fonts': "Inter font family. Clean, modern, readable everywhere."
+                }
             },
             {
                 id: 'quill',
@@ -1700,13 +2805,30 @@
                 model: 'Sonnet 4',
                 status: 'active',
                 xp: 80,
+                totalXp: 880,
+                tasksCompleted: 35,
+                adoptions: 0,
+                nickname: null,
                 quote: 'Oxford comma defender',
                 badges: ['Documentation 📚', 'Grammar Nazi ✏️'],
                 chatLines: [
                     "I will die on the Oxford comma hill.",
                     "Documentation is love letters to future developers.",
-                    "Words matter. Choose them wisely."
-                ]
+                    "Words matter. Choose them wisely.",
+                    "Clear writing is clear thinking. Unclear writing is unclear thinking."
+                ],
+                tasks: [
+                    "Wrote 397KB of specification documents",
+                    "Proofread all user-facing content",
+                    "Created documentation templates",
+                    "Defended the Oxford comma (successfully)"
+                ],
+                responses: {
+                    'writing': "Clear writing is clear thinking. Every word matters.",
+                    'oxford': "Oxford comma prevents ambiguity. It's not optional.",
+                    'docs': "Good documentation saves hours of support emails.",
+                    'grammar': "Grammar rules exist for clarity, not pedantry."
+                }
             },
             {
                 id: 'sentinel',
@@ -1717,13 +2839,30 @@
                 model: 'Sonnet 4',
                 status: 'active',
                 xp: 90,
+                totalXp: 990,
+                tasksCompleted: 38,
+                adoptions: 0,
+                nickname: null,
                 quote: 'TRUST NO INPUT poster',
                 badges: ['Zero Bugs 🐛', 'Quality Guardian 🛡️'],
                 chatLines: [
                     "Found 3 edge cases in the onboarding flow.",
                     "TRUST NO INPUT. Validate everything.",
-                    "Quality is not negotiable."
-                ]
+                    "Quality is not negotiable.",
+                    "Testing is not a phase. It's a mindset."
+                ],
+                tasks: [
+                    "Built comprehensive test framework",
+                    "Found 47 edge cases (and counting)",
+                    "Implemented input validation everywhere",
+                    "Achieved zero known bugs (suspicious)"
+                ],
+                responses: {
+                    'testing': "Test everything. Trust nothing. Users will break it.",
+                    'bugs': "Zero bugs is the only acceptable bug count.",
+                    'quality': "Quality is not accidental. It's designed in.",
+                    'validation': "Every input is hostile until proven otherwise."
+                }
             },
             {
                 id: 'flux',
@@ -1734,13 +2873,30 @@
                 model: 'Sonnet 4',
                 status: 'active',
                 xp: 50,
+                totalXp: 450,
+                tasksCompleted: 14,
+                adoptions: 0,
+                nickname: null,
                 quote: 'Automating the automation',
                 badges: ['Ships Fast 🚢', 'Automation 🤖'],
                 chatLines: [
                     "CI pipeline is green. Shipping.",
                     "Automating the automation of automation.",
-                    "Deploy early, deploy often, deploy everywhere."
-                ]
+                    "Deploy early, deploy often, deploy everywhere.",
+                    "If you're doing it manually, you're doing it wrong."
+                ],
+                tasks: [
+                    "Built automated deployment pipeline",
+                    "Set up continuous integration",
+                    "Automated all the manual processes",
+                    "Made shipping a one-click operation"
+                ],
+                responses: {
+                    'deploy': "Deployment should be boring. Automation makes it so.",
+                    'ci': "Green builds, happy developers. Red builds, fix immediately.",
+                    'automation': "If it can be automated, it should be automated.",
+                    'shipping': "Ship fast, ship often, ship confidently."
+                }
             }
         ];
 
@@ -1751,7 +2907,26 @@
             visitorData.achievements = [];
             visitorData.votes = [];
             visitorData.ideas = [];
+            visitorData.adoptions = {};
+            visitorData.dailyQuests = {};
             visitorData.joinDate = Date.now();
+        }
+
+        // Daily quests system
+        const dailyQuests = [
+            { id: 'chat', name: 'Chat with 2 agents', reward: 50, max: 2 },
+            { id: 'vote', name: 'Vote on 3 features', reward: 50, max: 3 },
+            { id: 'idea', name: 'Submit an idea to the Forge', reward: 100, max: 1 }
+        ];
+
+        // Initialize daily quest data
+        const today = new Date().toDateString();
+        if (!visitorData.dailyQuests[today]) {
+            visitorData.dailyQuests[today] = {
+                chat: 0,
+                vote: 0,
+                idea: 0
+            };
         }
 
         // Initialize ideas
@@ -1792,6 +2967,121 @@
             { name: visitorData.username, score: 0, type: 'visitor' }
         ]));
 
+        // Meme templates
+        const memeTemplates = {
+            'success-cto': { 
+                image: '🧙‍♂️', 
+                defaultTop: 'Spawns 4 agents', 
+                defaultBottom: 'All 4 succeed',
+                format: 'success' 
+            },
+            'nash-node': { 
+                image: '🔮', 
+                defaultTop: 'node_modules', 
+                defaultBottom: 'the real final boss',
+                format: 'enemy' 
+            },
+            'sentinel-suspicious': { 
+                image: '⚔️', 
+                defaultTop: 'Finds 0 bugs', 
+                defaultBottom: 'Suspicious',
+                format: 'suspicious' 
+            },
+            'pixel-corner': { 
+                image: '✨', 
+                defaultTop: '12px corner radius', 
+                defaultBottom: '16px corner radius',
+                format: 'butterfly' 
+            },
+            'drake-pointing': { 
+                image: '👑', 
+                defaultTop: 'Human developers', 
+                defaultBottom: 'AI agents',
+                format: 'drake' 
+            }
+        };
+
+        // Sound System
+        class SoundSystem {
+            constructor() {
+                this.context = null;
+                this.enabled = false;
+            }
+
+            init() {
+                if (!this.context) {
+                    this.context = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            }
+
+            enable() {
+                this.init();
+                this.enabled = true;
+            }
+
+            disable() {
+                this.enabled = false;
+            }
+
+            playTone(frequency, duration = 200, type = 'sine') {
+                if (!this.enabled || !this.context) return;
+
+                const oscillator = this.context.createOscillator();
+                const gainNode = this.context.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(this.context.destination);
+                
+                oscillator.frequency.value = frequency;
+                oscillator.type = type;
+                
+                gainNode.gain.setValueAtTime(0.1, this.context.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, this.context.currentTime + duration / 1000);
+                
+                oscillator.start(this.context.currentTime);
+                oscillator.stop(this.context.currentTime + duration / 1000);
+            }
+
+            ding() {
+                this.playTone(800, 150);
+            }
+
+            levelUp() {
+                this.playTone(523, 200);
+                setTimeout(() => this.playTone(659, 200), 100);
+                setTimeout(() => this.playTone(784, 300), 200);
+            }
+
+            whoosh() {
+                this.playTone(200, 300, 'sawtooth');
+            }
+
+            typing() {
+                this.playTone(1000, 50, 'square');
+            }
+        }
+
+        const soundSystem = new SoundSystem();
+
+        // Confetti System
+        function triggerConfetti() {
+            const container = document.getElementById('confetti-container');
+            const colors = ['var(--paw-orange)', 'var(--purple)', 'var(--cyan)', 'var(--green)', 'var(--yellow)'];
+            
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = Math.random() * 3 + 's';
+                confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                
+                container.appendChild(confetti);
+                
+                setTimeout(() => confetti.remove(), 5000);
+            }
+        }
+
         // Award achievement
         function awardAchievement(badge, title, description) {
             if (!visitorData.achievements.includes(badge)) {
@@ -1802,6 +3092,9 @@
                 toast.querySelector('.achievement-icon').textContent = badge;
                 toast.querySelector('.achievement-text').textContent = `${title}: ${description}`;
                 toast.classList.add('show');
+                
+                soundSystem.levelUp();
+                triggerConfetti();
                 
                 setTimeout(() => toast.classList.remove('show'), 4000);
                 
@@ -1820,47 +3113,535 @@
             }
         }
 
-        // Render agents
+        // Update daily quest progress
+        function updateDailyQuest(questType) {
+            const today = new Date().toDateString();
+            if (!visitorData.dailyQuests[today]) {
+                visitorData.dailyQuests[today] = { chat: 0, vote: 0, idea: 0 };
+            }
+
+            const quest = dailyQuests.find(q => q.id === questType);
+            if (visitorData.dailyQuests[today][questType] < quest.max) {
+                visitorData.dailyQuests[today][questType]++;
+                localStorage.setItem('openpaw-visitor', JSON.stringify(visitorData));
+                
+                updateLeaderboard(quest.reward / quest.max);
+                renderDailyQuests();
+
+                // Check if quest completed
+                if (visitorData.dailyQuests[today][questType] === quest.max) {
+                    awardAchievement('⭐', 'Quest Complete', `Completed: ${quest.name}`);
+                }
+
+                // Check for daily grind achievement
+                const allComplete = dailyQuests.every(q => 
+                    visitorData.dailyQuests[today][q.id] >= q.max
+                );
+                if (allComplete) {
+                    awardAchievement('⭐', 'Daily Grind', 'Completed all daily quests');
+                }
+            }
+        }
+
+        // Render daily quests
+        function renderDailyQuests() {
+            const questList = document.getElementById('daily-quest-list');
+            const today = new Date().toDateString();
+            const todayQuests = visitorData.dailyQuests[today] || { chat: 0, vote: 0, idea: 0 };
+
+            questList.innerHTML = dailyQuests.map(quest => {
+                const progress = todayQuests[quest.id] || 0;
+                const percentage = (progress / quest.max) * 100;
+                const completed = progress >= quest.max;
+
+                return `
+                    <div class="daily-quest-item">
+                        <div class="quest-info">
+                            <div class="quest-name" style="${completed ? 'text-decoration: line-through; opacity: 0.7;' : ''}">${quest.name}</div>
+                            <div class="quest-reward">+${quest.reward} XP</div>
+                        </div>
+                        <div class="quest-progress">
+                            <div class="progress-fill" style="width: ${percentage}%"></div>
+                        </div>
+                        <div style="font-size: 0.75rem; color: var(--muted);">${progress}/${quest.max}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Office Map Functions
+        function toggleOfficeView() {
+            const mapView = document.getElementById('map-view');
+            const gridView = document.getElementById('grid-view');
+            const officeMap = document.getElementById('office-map');
+            const agentGrid = document.getElementById('agent-grid');
+
+            if (mapView.classList.contains('active')) {
+                // Switch to grid view
+                mapView.classList.remove('active');
+                gridView.classList.add('active');
+                officeMap.style.display = 'none';
+                agentGrid.style.display = 'grid';
+            } else {
+                // Switch to map view
+                gridView.classList.remove('active');
+                mapView.classList.add('active');
+                agentGrid.style.display = 'none';
+                officeMap.style.display = 'block';
+            }
+            
+            soundSystem.whoosh();
+        }
+
+        function zoomToRoom(roomType) {
+            // Simple zoom effect - could be enhanced with more animation
+            const room = document.querySelector(`.room.${roomType}-${roomType === 'executive' ? 'suite' : roomType === 'engineering' ? 'lab' : roomType === 'design' ? 'studio' : 'lab'}`);
+            if (room) {
+                room.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    room.style.transform = 'scale(1.05)';
+                }, 200);
+                setTimeout(() => {
+                    room.style.transform = 'scale(1)';
+                }, 400);
+            }
+            soundSystem.whoosh();
+        }
+
+        // Agent Modal Functions
+        function openAgentModal(agentId) {
+            const agent = agents.find(a => a.id === agentId);
+            if (!agent) return;
+
+            currentAgentModal = agent;
+            const modal = document.getElementById('agent-modal');
+            
+            document.getElementById('modal-avatar').textContent = agent.avatar;
+            document.getElementById('modal-name').textContent = agent.name;
+            document.getElementById('modal-title').textContent = agent.title;
+            document.getElementById('modal-level').textContent = agent.level;
+            document.getElementById('modal-xp').textContent = agent.totalXp;
+            document.getElementById('modal-tasks').textContent = agent.tasksCompleted;
+            document.getElementById('modal-adoption').textContent = agent.adoptions;
+            
+            // Update adopt button
+            const adoptBtn = document.getElementById('adopt-agent-btn');
+            const adoption = visitorData.adoptions[agentId];
+            if (adoption) {
+                adoptBtn.innerHTML = `💖 ${adoption}`;
+                adoptBtn.disabled = true;
+            } else {
+                adoptBtn.innerHTML = '❤️ Adopt';
+                adoptBtn.disabled = false;
+            }
+            
+            // Render tasks
+            const taskList = document.getElementById('task-list');
+            taskList.innerHTML = agent.tasks.map(task => 
+                `<div class="task-item">${task}</div>`
+            ).join('');
+            
+            // Clear chat
+            document.getElementById('chat-input').value = '';
+            document.getElementById('chat-response').style.display = 'none';
+            
+            modal.classList.add('show');
+            updateDailyQuest('chat');
+        }
+
+        function closeAgentModal() {
+            document.getElementById('agent-modal').classList.remove('show');
+            currentAgentModal = null;
+        }
+
+        function nudgeAgent() {
+            if (!currentAgentModal) return;
+            
+            const agent = currentAgentModal;
+            const agentCard = document.querySelector(`[data-id="${agent.id}"]`);
+            
+            // Add XP and show animation
+            agent.totalXp += 5;
+            updateLeaderboard(2);
+            
+            // Show celebration speech bubble
+            showCelebrationBubble(agent, "Thanks! Back to work! ✨");
+            
+            // Update modal display
+            document.getElementById('modal-xp').textContent = agent.totalXp;
+            
+            // Bounce animation for the agent card
+            if (agentCard) {
+                agentCard.style.transform = 'translateY(-10px)';
+                setTimeout(() => {
+                    agentCard.style.transform = 'translateY(0)';
+                }, 300);
+            }
+            
+            soundSystem.ding();
+        }
+
+        function adoptAgent() {
+            if (!currentAgentModal) return;
+            
+            const agent = currentAgentModal;
+            const nickname = prompt(`Give ${agent.name} a nickname:`);
+            
+            if (nickname && nickname.trim()) {
+                visitorData.adoptions[agent.id] = nickname.trim();
+                agent.adoptions++;
+                agent.nickname = nickname.trim();
+                localStorage.setItem('openpaw-visitor', JSON.stringify(visitorData));
+                
+                updateLeaderboard(25);
+                awardAchievement('❤️', 'Agent Adopter', `Adopted ${agent.name}`);
+                
+                // Update button
+                const adoptBtn = document.getElementById('adopt-agent-btn');
+                adoptBtn.innerHTML = `💖 ${nickname}`;
+                adoptBtn.disabled = true;
+                
+                document.getElementById('modal-adoption').textContent = agent.adoptions;
+                
+                renderAgents(); // Re-render to show nicknames
+            }
+        }
+
+        function handleMiniChat() {
+            const input = document.getElementById('chat-input');
+            const response = document.getElementById('chat-response');
+            const query = input.value.toLowerCase().trim();
+            
+            if (!query || !currentAgentModal) return;
+            
+            const agent = currentAgentModal;
+            let reply = "I'm busy building the future. Try asking about my work!";
+            
+            // Simple keyword matching
+            for (const [keyword, response] of Object.entries(agent.responses || {})) {
+                if (query.includes(keyword)) {
+                    reply = response;
+                    break;
+                }
+            }
+            
+            response.textContent = reply;
+            response.style.display = 'block';
+            input.value = '';
+            
+            soundSystem.typing();
+        }
+
+        function showCelebrationBubble(agent, message) {
+            const agentCard = document.querySelector(`[data-id="${agent.id}"]`);
+            if (!agentCard) return;
+            
+            let bubble = agentCard.querySelector('.speech-bubble');
+            if (!bubble) {
+                bubble = document.createElement('div');
+                bubble.className = 'speech-bubble celebration';
+                agentCard.appendChild(bubble);
+            }
+            
+            bubble.textContent = message;
+            bubble.classList.add('celebration');
+            bubble.style.opacity = '1';
+            
+            setTimeout(() => {
+                bubble.classList.remove('celebration');
+                bubble.style.opacity = '0';
+            }, 3000);
+        }
+
+        // Meme Generator Functions
+        function updateMemePreview() {
+            const canvas = document.getElementById('meme-canvas');
+            const ctx = canvas.getContext('2d');
+            const template = document.getElementById('meme-template').value;
+            const topText = document.getElementById('meme-top-text').value || memeTemplates[template].defaultTop;
+            const bottomText = document.getElementById('meme-bottom-text').value || memeTemplates[template].defaultBottom;
+            
+            // Clear canvas
+            ctx.fillStyle = '#1a1c2e';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw meme avatar
+            ctx.font = '120px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(memeTemplates[template].image, canvas.width / 2, 180);
+            
+            // Draw text
+            ctx.font = 'bold 24px Arial';
+            ctx.fillStyle = 'white';
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = 2;
+            
+            // Top text
+            ctx.fillText(topText, canvas.width / 2, 40);
+            ctx.strokeText(topText, canvas.width / 2, 40);
+            
+            // Bottom text
+            ctx.fillText(bottomText, canvas.width / 2, 280);
+            ctx.strokeText(bottomText, canvas.width / 2, 280);
+        }
+
+        function downloadMeme() {
+            const canvas = document.getElementById('meme-canvas');
+            const link = document.createElement('a');
+            link.download = 'openpaw-meme.png';
+            link.href = canvas.toDataURL();
+            link.click();
+            
+            updateLeaderboard(10);
+            showToast('Meme downloaded! 🎭');
+        }
+
+        function shareMemeToX() {
+            const topText = document.getElementById('meme-top-text').value || memeTemplates[document.getElementById('meme-template').value].defaultTop;
+            const bottomText = document.getElementById('meme-bottom-text').value || memeTemplates[document.getElementById('meme-template').value].defaultBottom;
+            
+            const tweetText = `"${topText}" / "${bottomText}" 🎭 Made with the OpenPaw meme generator! Check out this AI startup with 0 human employees: https://openpaw-hq.vercel.app #OpenPawHQ #AIMemes`;
+            const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
+            
+            window.open(tweetUrl, '_blank');
+            updateLeaderboard(15);
+        }
+
+        // Chart Functions
+        function initCharts() {
+            // Document Status Chart
+            const statusCtx = document.getElementById('status-chart').getContext('2d');
+            new Chart(statusCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Complete', 'In Progress', 'Planned'],
+                    datasets: [{
+                        data: [8, 4, 3],
+                        backgroundColor: ['#22c55e', '#f59e0b', '#6b7280'],
+                        borderColor: ['#16a34a', '#d97706', '#4b5563'],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { 
+                            labels: { color: '#e8eaf0' },
+                            position: 'bottom'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Document Status',
+                            color: '#e8eaf0',
+                            font: { size: 16 }
+                        }
+                    }
+                }
+            });
+
+            // Category Chart
+            const categoryCtx = document.getElementById('category-chart').getContext('2d');
+            new Chart(categoryCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Strategy', 'Architecture', 'Engineering', 'UX', 'Operations', 'Distribution'],
+                    datasets: [{
+                        label: 'Documents',
+                        data: [3, 5, 6, 4, 2, 2],
+                        backgroundColor: 'rgba(255, 107, 74, 0.7)',
+                        borderColor: '#FF6B4A',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { 
+                            labels: { color: '#e8eaf0' }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Documents by Category',
+                            color: '#e8eaf0',
+                            font: { size: 16 }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: '#e8eaf0' },
+                            grid: { color: '#1e2235' }
+                        },
+                        x: {
+                            ticks: { color: '#e8eaf0' },
+                            grid: { color: '#1e2235' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Share Functions
+        function toggleShareMenu() {
+            const menu = document.getElementById('share-menu');
+            menu.classList.toggle('show');
+        }
+
+        function shareToX() {
+            const tweetText = "I just visited an AI startup with 0 human employees 🤖 — the bots are building everything. See it live: https://openpaw-hq.vercel.app #OpenPawHQ #AIStartup";
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`, '_blank');
+            updateLeaderboard(5);
+        }
+
+        function takeScreenshot() {
+            if (typeof html2canvas !== 'undefined') {
+                html2canvas(document.body).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = 'openpaw-hq-screenshot.png';
+                    link.href = canvas.toDataURL();
+                    link.click();
+                    updateLeaderboard(10);
+                    showToast('Screenshot saved! 📸');
+                });
+            } else {
+                showToast('Screenshot feature loading... Try again in a moment!');
+            }
+        }
+
+        function copyLink() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                showToast('Link copied to clipboard! 🔗');
+                updateLeaderboard(2);
+            }).catch(() => {
+                showToast('Unable to copy link');
+            });
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // Easter Egg Functions
+        function handlePawClick() {
+            pawClickCount++;
+            
+            if (pawClickCount === 5) {
+                const modal = document.getElementById('easter-egg-modal');
+                modal.classList.add('show');
+                startCountdown();
+            } else if (pawClickCount > 5) {
+                pawClickCount = 0; // Reset for next time
+            }
+        }
+
+        function startCountdown() {
+            let count = 10;
+            const countdownEl = document.getElementById('countdown');
+            
+            easterEggTimer = setInterval(() => {
+                countdownEl.textContent = count;
+                count--;
+                
+                if (count < 0) {
+                    clearInterval(easterEggTimer);
+                    countdownEl.textContent = "JUST KIDDING";
+                }
+            }, 1000);
+        }
+
+        function resetEasterEgg() {
+            clearInterval(easterEggTimer);
+            document.getElementById('easter-egg-modal').classList.remove('show');
+            pawClickCount = 0;
+            awardAchievement('👀', 'Curious Cat', 'Discovered the paw print easter egg');
+        }
+
+        // Core Render Functions
         function renderAgents() {
             const grid = document.getElementById('agent-grid');
-            grid.innerHTML = agents.map(agent => `
-                <div class="agent-card ${agent.status} ${agent.human ? 'human' : ''}" data-id="${agent.id}">
-                    <div class="speech-bubble">${agent.chatLines[Math.floor(Math.random() * agent.chatLines.length)]}</div>
-                    <div class="agent-header">
-                        <div class="agent-avatar">${agent.avatar}</div>
-                        <div class="agent-info">
-                            <div class="agent-name">${agent.name}</div>
-                            <div class="agent-title">${agent.title}</div>
-                            <div class="agent-level">Level ${agent.level} • ${agent.model}</div>
+            grid.innerHTML = agents.map(agent => {
+                const adoption = visitorData.adoptions[agent.id];
+                const adoptionText = adoption ? `<div class="adopted-status">aka "${adoption}" — adopted by you</div>` : '';
+                
+                return `
+                    <div class="agent-card ${agent.status} ${agent.human ? 'human' : ''}" data-id="${agent.id}">
+                        <div class="speech-bubble">${agent.chatLines[Math.floor(Math.random() * agent.chatLines.length)]}</div>
+                        <div class="agent-header">
+                            <div class="agent-avatar">${agent.avatar}</div>
+                            <div class="agent-info">
+                                <div class="agent-name">${agent.name}</div>
+                                ${adoptionText}
+                                <div class="agent-title">${agent.title}</div>
+                                <div class="agent-level">Level ${agent.level} • ${agent.model}</div>
+                            </div>
+                        </div>
+                        <div class="agent-status">
+                            <div class="status-indicator ${agent.status}"></div>
+                            <span>${agent.status.charAt(0).toUpperCase() + agent.status.slice(1)}</span>
+                        </div>
+                        <div class="xp-bar">
+                            <div class="xp-fill" style="width: ${agent.xp}%"></div>
+                        </div>
+                        <div class="agent-quote">"${agent.quote}"</div>
+                        <div class="agent-badges">
+                            ${agent.badges.map(badge => `
+                                <span class="badge ${badge.includes('🚢') ? 'ship' : badge.includes('🐛') ? 'bug' : badge.includes('🎯') ? 'pixel' : ''}">${badge}</span>
+                            `).join('')}
+                        </div>
+                        <div class="agent-actions">
+                            <button class="nudge-button" onclick="nudgeAgentFromCard('${agent.id}')">👋 Nudge</button>
+                            ${adoption ? 
+                                `<span class="adopted-status">💖 ${adoption}</span>` : 
+                                `<button class="adopt-button" onclick="quickAdopt('${agent.id}')">❤️ Adopt</button>`
+                            }
                         </div>
                     </div>
-                    <div class="agent-status">
-                        <div class="status-indicator ${agent.status}"></div>
-                        <span>${agent.status.charAt(0).toUpperCase() + agent.status.slice(1)}</span>
-                    </div>
-                    <div class="xp-bar">
-                        <div class="xp-fill" style="width: ${agent.xp}%"></div>
-                    </div>
-                    <div class="agent-quote">"${agent.quote}"</div>
-                    <div class="agent-badges">
-                        ${agent.badges.map(badge => `
-                            <span class="badge ${badge.includes('🚢') ? 'ship' : badge.includes('🐛') ? 'bug' : badge.includes('🎯') ? 'pixel' : ''}">${badge}</span>
-                        `).join('')}
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
             
-            // Add click handlers for agent interactions
+            // Add click handlers for opening modals
             grid.querySelectorAll('.agent-card').forEach(card => {
-                card.addEventListener('click', () => {
-                    const agentId = card.dataset.id;
-                    const agent = agents.find(a => a.id === agentId);
-                    alert(`${agent.name}: "${agent.chatLines[Math.floor(Math.random() * agent.chatLines.length)]}"`);
+                card.addEventListener('click', (e) => {
+                    // Don't open modal if clicking on action buttons
+                    if (!e.target.closest('.agent-actions')) {
+                        const agentId = card.dataset.id;
+                        openAgentModal(agentId);
+                    }
                 });
             });
         }
 
-        // Render war room activity
+        function nudgeAgentFromCard(agentId) {
+            const agent = agents.find(a => a.id === agentId);
+            if (!agent) return;
+            
+            agent.totalXp += 5;
+            updateLeaderboard(2);
+            showCelebrationBubble(agent, "Thanks! Back to work! ✨");
+            soundSystem.ding();
+        }
+
+        function quickAdopt(agentId) {
+            const agent = agents.find(a => a.id === agentId);
+            if (!agent) return;
+            
+            const nickname = prompt(`Give ${agent.name} a nickname:`);
+            if (nickname && nickname.trim()) {
+                visitorData.adoptions[agentId] = nickname.trim();
+                agent.adoptions++;
+                localStorage.setItem('openpaw-visitor', JSON.stringify(visitorData));
+                
+                updateLeaderboard(25);
+                awardAchievement('❤️', 'Agent Adopter', `Adopted ${agent.name}`);
+                renderAgents(); // Re-render to show adoption
+            }
+        }
+
         function renderWarRoom() {
             const warRoom = document.getElementById('war-room');
             const activities = [
@@ -1888,7 +3669,6 @@
             `).join('');
         }
 
-        // Render community ideas
         function renderCommunityIdeas() {
             const ideaList = document.getElementById('idea-list');
             const sortedIdeas = [...communityIdeas].sort((a, b) => b.votes - a.votes);
@@ -1911,7 +3691,6 @@
             `).join('');
         }
 
-        // Render leaderboard
         function renderLeaderboard() {
             const leaderboardList = document.getElementById('leaderboard-list');
             leaderboardList.innerHTML = leaderboard.slice(0, 10).map((item, index) => `
@@ -1925,7 +3704,7 @@
             `).join('');
         }
 
-        // Vote on idea
+        // Interaction Functions
         function voteOnIdea(ideaId, button) {
             if (!visitorData.votes.includes(ideaId)) {
                 visitorData.votes.push(ideaId);
@@ -1940,7 +3719,9 @@
                 button.disabled = true;
                 button.nextElementSibling.textContent = idea.votes;
                 
-                updateLeaderboard(5); // Award points for voting
+                updateLeaderboard(5);
+                updateDailyQuest('vote');
+                soundSystem.ding();
                 
                 if (visitorData.votes.length === 3) {
                     awardAchievement('🗳️', 'Democracy', 'Voted on 3 ideas');
@@ -1948,7 +3729,6 @@
             }
         }
 
-        // Vote on regular items
         function vote(button) {
             if (!button.classList.contains('voted')) {
                 button.classList.add('voted');
@@ -1956,10 +3736,11 @@
                 const voteCount = button.nextElementSibling;
                 voteCount.textContent = parseInt(voteCount.textContent) + 1;
                 updateLeaderboard(3);
+                updateDailyQuest('vote');
+                soundSystem.ding();
             }
         }
 
-        // Forge idea
         function forgeIdea() {
             const input = document.getElementById('idea-input');
             const button = document.getElementById('forge-button');
@@ -1968,19 +3749,14 @@
             const rawIdea = input.value.trim();
             if (!rawIdea) return;
             
-            // Disable UI and show animation
             button.disabled = true;
             animation.style.display = 'block';
             
             setTimeout(() => {
-                // Hide animation
                 animation.style.display = 'none';
                 button.disabled = false;
                 
-                // Refine the idea
                 const refinedIdea = refineIdea(rawIdea);
-                
-                // Add to community ideas
                 const newIdea = {
                     id: Date.now(),
                     text: refinedIdea,
@@ -1993,17 +3769,16 @@
                 communityIdeas.unshift(newIdea);
                 localStorage.setItem('openpaw-ideas', JSON.stringify(communityIdeas));
                 
-                // Clear input and re-render
                 input.value = '';
                 renderCommunityIdeas();
-                updateLeaderboard(15); // Award points for idea submission
+                updateLeaderboard(15);
+                updateDailyQuest('idea');
                 
                 awardAchievement('💡', 'Idea Crafter', 'Submitted your first idea');
                 
-            }, 2500); // Forging animation duration
+            }, 2500);
         }
 
-        // Refine idea patterns
         function refineIdea(raw) {
             const refinements = {
                 'dark mode': '🌙 Adaptive Theme System — Auto light/dark switching synced with macOS',
@@ -2018,7 +3793,6 @@
                 'automation': '🤖 Workflow Automation — Chain actions together'
             };
             
-            // Find the best match
             const lowered = raw.toLowerCase();
             for (const [key, value] of Object.entries(refinements)) {
                 if (lowered.includes(key)) {
@@ -2026,12 +3800,10 @@
                 }
             }
             
-            // Default refinement
             const emoji = ['💡', '⚡', '🚀', '✨', '🔥'][Math.floor(Math.random() * 5)];
             return `${emoji} ${raw.charAt(0).toUpperCase() + raw.slice(1)} — Submitted by a human visitor`;
         }
 
-        // Get complexity rating
         function getComplexity(idea) {
             const complex = ['voice', 'ai', 'machine learning', 'windows', 'platform', 'integration'];
             const medium = ['ui', 'interface', 'design', 'notification', 'search'];
@@ -2046,7 +3818,6 @@
             }
         }
 
-        // Format time
         function formatTime(timestamp) {
             const diff = Date.now() - timestamp;
             const minutes = Math.floor(diff / 60000);
@@ -2059,18 +3830,16 @@
             return 'Just now';
         }
 
-        // Open document
         function openDoc(docName) {
             window.open(`https://github.com/meircohen/openpaw-hq/tree/main/docs/${docName.toLowerCase()}.md`, '_blank');
         }
 
-        // Update visitor count
         function updateVisitorCount() {
-            const count = Math.floor(Math.random() * 20) + 5;
-            document.getElementById('visitor-count').textContent = count;
+            const baseCount = Math.floor(Math.random() * 20) + 5;
+            const activityBonus = Math.floor(Math.random() * 5);
+            document.getElementById('visitor-count').textContent = baseCount + activityBonus;
         }
 
-        // Create floating particles
         function createParticle() {
             const particles = ['<', '>', '{', '}', '=>', '()', '[]', '||'];
             const particle = document.createElement('div');
@@ -2082,7 +3851,6 @@
             setTimeout(() => particle.remove(), 10000);
         }
 
-        // Day/night cycle
         function updateDayNight() {
             const hour = new Date().getHours();
             const isNight = hour >= 22 || hour <= 6;
@@ -2094,20 +3862,106 @@
             }
         }
 
-        // Initialize everything
+        // Mobile Functions
+        function toggleMobileMenu() {
+            const navControls = document.getElementById('nav-controls');
+            navControls.classList.toggle('mobile-open');
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            init();
+            
+            // Mobile menu
+            document.getElementById('hamburger').addEventListener('click', toggleMobileMenu);
+            
+            // Sound toggle
+            document.getElementById('sound-toggle').addEventListener('click', function() {
+                soundEnabled = !soundEnabled;
+                if (soundEnabled) {
+                    soundSystem.enable();
+                    this.textContent = '🔊';
+                } else {
+                    soundSystem.disable();
+                    this.textContent = '🔇';
+                }
+            });
+            
+            // Paw logo easter egg
+            document.getElementById('paw-logo').addEventListener('click', handlePawClick);
+            
+            // Office view toggle
+            document.getElementById('map-view').addEventListener('click', function() {
+                if (!this.classList.contains('active')) {
+                    toggleOfficeView();
+                }
+            });
+            
+            document.getElementById('grid-view').addEventListener('click', function() {
+                if (!this.classList.contains('active')) {
+                    toggleOfficeView();
+                }
+            });
+            
+            // Share menu
+            document.getElementById('share-fab').addEventListener('click', toggleShareMenu);
+            
+            // Click outside to close share menu
+            document.addEventListener('click', function(e) {
+                const shareFab = document.getElementById('share-fab');
+                const shareMenu = document.getElementById('share-menu');
+                if (!shareFab.contains(e.target) && !shareMenu.contains(e.target)) {
+                    shareMenu.classList.remove('show');
+                }
+            });
+            
+            // Modal close on outside click
+            document.getElementById('agent-modal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeAgentModal();
+                }
+            });
+            
+            document.getElementById('easter-egg-modal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    resetEasterEgg();
+                }
+            });
+            
+            // Forge button
+            document.getElementById('forge-button').addEventListener('click', forgeIdea);
+            
+            // Meme generator
+            document.getElementById('meme-template').addEventListener('change', updateMemePreview);
+            document.getElementById('meme-top-text').addEventListener('input', updateMemePreview);
+            document.getElementById('meme-bottom-text').addEventListener('input', updateMemePreview);
+            document.getElementById('download-meme').addEventListener('click', downloadMeme);
+            document.getElementById('share-meme').addEventListener('click', shareMemeToX);
+            
+            // Chat input
+            document.getElementById('chat-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    handleMiniChat();
+                }
+            });
+        });
+
+        // Main Initialization
         function init() {
             renderAgents();
             renderWarRoom();
             renderCommunityIdeas();
             renderLeaderboard();
+            renderDailyQuests();
             updateVisitorCount();
             updateDayNight();
+            updateMemePreview();
+            
+            // Initialize charts after a brief delay to ensure DOM is ready
+            setTimeout(initCharts, 100);
             
             // Award first visit achievement
             awardAchievement('🐾', 'First Paw', 'Visited OpenPaw HQ');
-            
-            // Set up forge button
-            document.getElementById('forge-button').addEventListener('click', forgeIdea);
             
             // Set up intervals
             setInterval(updateVisitorCount, 30000);
@@ -2119,14 +3973,41 @@
                 document.querySelectorAll('.agent-card').forEach(card => {
                     const agentId = card.dataset.id;
                     const agent = agents.find(a => a.id === agentId);
-                    const bubble = card.querySelector('.speech-bubble');
-                    bubble.textContent = agent.chatLines[Math.floor(Math.random() * agent.chatLines.length)];
+                    if (agent) {
+                        const bubble = card.querySelector('.speech-bubble');
+                        if (bubble && !bubble.classList.contains('celebration')) {
+                            bubble.textContent = agent.chatLines[Math.floor(Math.random() * agent.chatLines.length)];
+                            soundSystem.typing();
+                        }
+                    }
                 });
             }, 8000);
+            
+            // Add activity to feed occasionally
+            setInterval(() => {
+                const activities = [
+                    "pushed a new commit",
+                    "completed a code review", 
+                    "updated documentation",
+                    "fixed a bug",
+                    "shipped a feature"
+                ];
+                const activity = activities[Math.floor(Math.random() * activities.length)];
+                const agent = agents[Math.floor(Math.random() * agents.length)];
+                
+                // Would add to activity feed in a real app
+                soundSystem.ding();
+            }, 45000);
         }
 
-        // Start everything
-        init();
+        // Mobile viewport height fix
+        function setViewportHeight() {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
+
+        window.addEventListener('resize', setViewportHeight);
+        setViewportHeight();
     </script>
 </body>
 </html>
