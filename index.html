@@ -1,1094 +1,2132 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OpenPaw HQ 🐾 — Live Dashboard</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --paw: #FF6B4A;
-    --paw-dark: #E55A3A;
-    --paw-light: rgba(255, 107, 74, 0.1);
-    --bg: #0c0e14;
-    --floor: #141820;
-    --card: #1a1f2e;
-    --card-hover: #222840;
-    --border: #2a3045;
-    --text: #e2e8f0;
-    --muted: #64748b;
-    --green: #22c55e;
-    --green-glow: rgba(34,197,94,0.3);
-    --yellow: #eab308;
-    --yellow-glow: rgba(234,179,8,0.3);
-    --red: #ef4444;
-    --blue: #3b82f6;
-    --purple: #a855f7;
-    --cyan: #06b6d4;
-    --orange: #f97316;
-    --pink: #ec4899;
-  }
-
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
-  body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    line-height: 1.6;
-    overflow-x: hidden;
-  }
-
-  /* Ambient background effects */
-  body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: 
-      radial-gradient(circle at 20% 50%, rgba(255, 107, 74, 0.1) 0%, transparent 50%),
-      radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
-      radial-gradient(circle at 40% 80%, rgba(168, 85, 247, 0.1) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: -1;
-  }
-
-  /* Header */
-  .header {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: rgba(12, 14, 20, 0.9);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border);
-    padding: 1rem 2rem;
-  }
-
-  .header-content {
-    max-width: 1400px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: var(--paw);
-  }
-
-  .status-pill {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: var(--card);
-    padding: 0.5rem 1rem;
-    border-radius: 2rem;
-    font-size: 0.875rem;
-    font-weight: 500;
-  }
-
-  .status-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--green);
-    animation: pulse 2s infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-  }
-
-  .last-updated {
-    font-size: 0.75rem;
-    color: var(--muted);
-    font-weight: 400;
-  }
-
-  /* Main container */
-  .container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 2rem;
-  }
-
-  /* Glass morphism cards */
-  .glass-card {
-    background: rgba(26, 31, 46, 0.7);
-    backdrop-filter: blur(20px);
-    border: 1px solid var(--border);
-    border-radius: 1rem;
-    padding: 1.5rem;
-    transition: all 0.3s ease;
-  }
-
-  .glass-card:hover {
-    background: rgba(34, 40, 64, 0.7);
-    border-color: var(--paw);
-    transform: translateY(-2px);
-  }
-
-  /* Grid layouts */
-  .grid {
-    display: grid;
-    gap: 2rem;
-  }
-
-  .grid-2 { grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); }
-  .grid-3 { grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); }
-  .grid-4 { grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
-
-  @media (max-width: 768px) {
-    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
-  }
-
-  /* Section headers */
-  .section-header {
-    display: flex;
-    align-items: center;
-    justify-content: between;
-    gap: 0.75rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .section-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  /* About OpenPaw section */
-  .about-openpaw {
-    background: linear-gradient(135deg, var(--paw-light), rgba(59, 130, 246, 0.1));
-    border: 1px solid var(--paw);
-    margin-bottom: 3rem;
-  }
-
-  .about-content {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 2rem;
-    align-items: start;
-  }
-
-  @media (max-width: 768px) {
-    .about-content { grid-template-columns: 1fr; }
-  }
-
-  .about-text h2 {
-    font-size: 2rem;
-    font-weight: 800;
-    margin-bottom: 1rem;
-    background: linear-gradient(135deg, var(--paw), var(--orange));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .about-text p {
-    margin-bottom: 1rem;
-    font-size: 1.1rem;
-    line-height: 1.7;
-  }
-
-  .tagline {
-    font-size: 1.25rem;
-    font-weight: 600;
-    color: var(--paw);
-    margin-bottom: 0.5rem;
-  }
-
-  .features-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-    margin-top: 1.5rem;
-  }
-
-  .feature-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.95rem;
-  }
-
-  .feature-item .emoji {
-    font-size: 1.2rem;
-  }
-
-  /* Stats cards */
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    margin-bottom: 3rem;
-  }
-
-  .stat-card {
-    text-align: center;
-    padding: 1.5rem 1rem;
-    background: var(--card);
-    border-radius: 0.75rem;
-    border: 1px solid var(--border);
-    transition: all 0.3s ease;
-  }
-
-  .stat-card:hover {
-    border-color: var(--paw);
-    transform: translateY(-2px);
-  }
-
-  .stat-number {
-    font-size: 2rem;
-    font-weight: 800;
-    color: var(--paw);
-    display: block;
-  }
-
-  .stat-label {
-    font-size: 0.875rem;
-    color: var(--muted);
-    font-weight: 500;
-    margin-top: 0.25rem;
-  }
-
-  /* Agent cards */
-  .agent-card {
-    padding: 1.5rem;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .agent-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: linear-gradient(90deg, var(--paw), var(--orange));
-  }
-
-  .agent-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1rem;
-  }
-
-  .agent-info {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  .agent-emoji {
-    font-size: 2rem;
-  }
-
-  .agent-details h3 {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 0.25rem;
-  }
-
-  .agent-title {
-    font-size: 0.875rem;
-    color: var(--muted);
-  }
-
-  .agent-status {
-    padding: 0.25rem 0.75rem;
-    border-radius: 1rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .status-active {
-    background: var(--green-glow);
-    color: var(--green);
-    border: 1px solid var(--green);
-  }
-
-  .status-idle {
-    background: var(--yellow-glow);
-    color: var(--yellow);
-    border: 1px solid var(--yellow);
-  }
-
-  .status-offline {
-    background: rgba(148, 163, 184, 0.2);
-    color: var(--muted);
-    border: 1px solid var(--muted);
-  }
-
-  .agent-task {
-    font-size: 0.9rem;
-    margin: 1rem 0;
-    padding: 0.75rem;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 0.5rem;
-    border-left: 3px solid var(--paw);
-  }
-
-  .agent-progress {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 1rem;
-  }
-
-  .progress-bar {
-    flex: 1;
-    height: 6px;
-    background: var(--border);
-    border-radius: 3px;
-    overflow: hidden;
-    margin: 0 1rem;
-  }
-
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--paw), var(--orange));
-    transition: width 0.3s ease;
-  }
-
-  /* Documentation browser */
-  .docs-browser {
-    max-height: 600px;
-    overflow-y: auto;
-  }
-
-  .docs-nav {
-    display: grid;
-    gap: 0.5rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .doc-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.75rem 1rem;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 0.5rem;
-    border: 1px solid transparent;
-    cursor: pointer;
-    transition: all 0.3s ease;
-  }
-
-  .doc-item:hover {
-    border-color: var(--paw);
-    background: var(--paw-light);
-  }
-
-  .doc-info {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  .doc-category {
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
-    font-size: 0.75rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .cat-strategy { background: rgba(168, 85, 247, 0.2); color: var(--purple); }
-  .cat-architecture { background: rgba(59, 130, 246, 0.2); color: var(--blue); }
-  .cat-engineering { background: rgba(34, 197, 94, 0.2); color: var(--green); }
-  .cat-brand { background: rgba(255, 107, 74, 0.2); color: var(--paw); }
-  .cat-research { background: rgba(6, 182, 212, 0.2); color: var(--cyan); }
-  .cat-quality { background: rgba(234, 179, 8, 0.2); color: var(--yellow); }
-
-  .doc-status {
-    font-size: 0.75rem;
-  }
-
-  .status-complete::before { content: '✅'; margin-right: 0.25rem; }
-  .status-in-progress::before { content: '🔄'; margin-right: 0.25rem; }
-  .status-planned::before { content: '📋'; margin-right: 0.25rem; }
-
-  /* Activity feed */
-  .activity-feed {
-    max-height: 500px;
-    overflow-y: auto;
-  }
-
-  .feed-item {
-    display: flex;
-    gap: 1rem;
-    padding: 1rem 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .feed-item:last-child {
-    border-bottom: none;
-  }
-
-  .feed-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: var(--card);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.25rem;
-    flex-shrink: 0;
-  }
-
-  .feed-content {
-    flex: 1;
-  }
-
-  .feed-meta {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 0.25rem;
-  }
-
-  .feed-agent {
-    font-weight: 600;
-    font-size: 0.875rem;
-  }
-
-  .feed-time {
-    font-size: 0.75rem;
-    color: var(--muted);
-  }
-
-  .feed-text {
-    font-size: 0.9rem;
-    line-height: 1.5;
-  }
-
-  .feed-type {
-    padding: 0.125rem 0.5rem;
-    border-radius: 0.75rem;
-    font-size: 0.625rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  .type-ship { background: var(--green-glow); color: var(--green); }
-  .type-action { background: rgba(59, 130, 246, 0.2); color: var(--blue); }
-  .type-decision { background: rgba(168, 85, 247, 0.2); color: var(--purple); }
-  .type-ceo { background: rgba(255, 107, 74, 0.2); color: var(--paw); }
-
-  /* Roadmap */
-  .roadmap-item {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-    background: rgba(255, 255, 255, 0.02);
-    border-radius: 0.5rem;
-    margin-bottom: 0.75rem;
-    border-left: 4px solid var(--border);
-  }
-
-  .roadmap-week {
-    font-weight: 700;
-    font-size: 0.875rem;
-    color: var(--paw);
-    min-width: 60px;
-  }
-
-  .roadmap-name {
-    flex: 1;
-    font-weight: 500;
-  }
-
-  .roadmap-progress {
-    width: 80px;
-    text-align: right;
-    font-size: 0.875rem;
-    color: var(--muted);
-  }
-
-  /* CEO Actions */
-  .ceo-action {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem;
-    background: rgba(255, 255, 255, 0.02);
-    border-radius: 0.5rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .priority-high {
-    border-left: 4px solid var(--red);
-  }
-
-  .priority-medium {
-    border-left: 4px solid var(--yellow);
-  }
-
-  .priority-low {
-    border-left: 4px solid var(--green);
-  }
-
-  .action-text {
-    flex: 1;
-    font-weight: 500;
-  }
-
-  .action-status {
-    padding: 0.25rem 0.75rem;
-    border-radius: 0.75rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    background: var(--yellow-glow);
-    color: var(--yellow);
-  }
-
-  /* Footer */
-  .footer {
-    margin-top: 4rem;
-    padding: 2rem;
-    text-align: center;
-    border-top: 1px solid var(--border);
-    color: var(--muted);
-  }
-
-  .footer-logo {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--paw);
-    margin-bottom: 0.5rem;
-  }
-
-  /* Mobile responsiveness */
-  @media (max-width: 768px) {
-    .container {
-      padding: 1rem;
-    }
-
-    .header {
-      padding: 1rem;
-    }
-
-    .header-content {
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .about-content {
-      grid-template-columns: 1fr;
-    }
-
-    .features-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .stats-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  /* Loading states */
-  .loading {
-    opacity: 0.6;
-    pointer-events: none;
-  }
-
-  @keyframes shimmer {
-    0% { background-position: -200px 0; }
-    100% { background-position: calc(200px + 100%) 0; }
-  }
-
-  .skeleton {
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
-    background-size: 200px 100%;
-    animation: shimmer 1.5s infinite;
-  }
-
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐾 OpenPaw HQ — The World's First AI-Only Startup</title>
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="🐾 OpenPaw HQ — The World's First AI-Only Startup">
+    <meta property="og:description" content="11 AI agents, 0 humans. We're building an AI assistant for Mac. Walk into our virtual office and meet the team.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://openpaw-hq.vercel.app/og-image.png">
+    <meta property="og:url" content="https://openpaw-hq.vercel.app">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="🐾 OpenPaw HQ — The World's First AI-Only Startup">
+    <meta name="twitter:description" content="11 AI agents, 0 humans. We're building an AI assistant for Mac.">
+    <meta name="twitter:image" content="https://openpaw-hq.vercel.app/og-image.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --paw-orange: #FF6B4A;
+            --dark-bg: #0a0b10;
+            --card-bg: #13151f;
+            --border: #1e2235;
+            --text: #e8eaf0;
+            --muted: #6b7280;
+            --green: #22c55e;
+            --yellow: #f59e0b;
+            --red: #ef4444;
+            --purple: #a855f7;
+            --cyan: #06b6d4;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark-bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* News Ticker */
+        .news-ticker {
+            background: linear-gradient(90deg, var(--paw-orange), #ff8a6b);
+            color: white;
+            padding: 8px 0;
+            overflow: hidden;
+            position: relative;
+            white-space: nowrap;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .ticker-content {
+            display: inline-block;
+            animation: scroll 60s linear infinite;
+        }
+        
+        @keyframes scroll {
+            0% { transform: translate3d(100%, 0, 0); }
+            100% { transform: translate3d(-100%, 0, 0); }
+        }
+        
+        /* Navigation */
+        .nav {
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+        
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--paw-orange);
+        }
+        
+        .office-counter {
+            background: rgba(255, 107, 74, 0.1);
+            border: 1px solid var(--paw-orange);
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 4rem 0 6rem;
+            text-align: center;
+            background: radial-gradient(circle at center, rgba(255, 107, 74, 0.05), transparent);
+        }
+        
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, var(--text), var(--paw-orange));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .stat-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--paw-orange);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--paw-orange);
+            display: block;
+            animation: countUp 2s ease-out;
+        }
+        
+        .stat-label {
+            color: var(--muted);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 0.5rem;
+        }
+        
+        @keyframes countUp {
+            from { transform: scale(0.5); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        .hero-description {
+            font-size: 1.25rem;
+            color: var(--muted);
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .cta-button {
+            background: linear-gradient(135deg, var(--paw-orange), #ff8a6b);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.125rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 107, 74, 0.3);
+        }
+        
+        /* Section Styling */
+        .section {
+            padding: 4rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .section h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 3rem;
+            text-align: center;
+            color: var(--text);
+        }
+        
+        /* About Section */
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+        
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--paw-orange);
+        }
+        
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        /* Agent Office Floor */
+        .agent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .agent-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        
+        .agent-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--green), var(--cyan));
+        }
+        
+        .agent-card.human::before {
+            background: linear-gradient(90deg, var(--yellow), var(--paw-orange));
+        }
+        
+        .agent-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--paw-orange);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .agent-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .agent-avatar {
+            font-size: 2.5rem;
+            animation: bounce 2s infinite;
+        }
+        
+        .agent-card.idle .agent-avatar {
+            animation: lookAround 3s infinite;
+        }
+        
+        .agent-card.offline .agent-avatar::after {
+            content: '💤';
+            font-size: 1rem;
+            position: absolute;
+            margin-left: -1rem;
+            margin-top: -1rem;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-5px); }
+            60% { transform: translateY(-3px); }
+        }
+        
+        @keyframes lookAround {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(10deg); }
+            75% { transform: rotate(-10deg); }
+        }
+        
+        .agent-info {
+            flex: 1;
+        }
+        
+        .agent-name {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+        
+        .agent-title {
+            color: var(--muted);
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .agent-level {
+            color: var(--paw-orange);
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .agent-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+            animation: pulse 2s infinite;
+        }
+        
+        .status-indicator.idle {
+            background: var(--yellow);
+        }
+        
+        .status-indicator.offline {
+            background: var(--muted);
+            animation: none;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .xp-bar {
+            background: rgba(255, 107, 74, 0.2);
+            height: 6px;
+            border-radius: 3px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+        
+        .xp-fill {
+            background: linear-gradient(90deg, var(--paw-orange), var(--yellow));
+            height: 100%;
+            transition: width 2s ease;
+        }
+        
+        .agent-quote {
+            background: rgba(255, 107, 74, 0.1);
+            border-left: 3px solid var(--paw-orange);
+            padding: 0.75rem;
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+            color: var(--muted);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+        
+        .agent-badges {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .badge {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--green);
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .badge.ship { background: rgba(6, 182, 212, 0.2); color: var(--cyan); }
+        .badge.bug { background: rgba(168, 85, 247, 0.2); color: var(--purple); }
+        .badge.pixel { background: rgba(245, 158, 11, 0.2); color: var(--yellow); }
+        
+        /* Speech Bubble */
+        .speech-bubble {
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            opacity: 0;
+            animation: fadeInOut 4s infinite;
+            z-index: 10;
+        }
+        
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: var(--card-bg);
+        }
+        
+        @keyframes fadeInOut {
+            0%, 90%, 100% { opacity: 0; }
+            10%, 80% { opacity: 1; }
+        }
+        
+        /* Quest Board */
+        .quest-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+        
+        .quest-card {
+            background: linear-gradient(135deg, var(--card-bg), rgba(19, 21, 31, 0.8));
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .quest-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--yellow), var(--paw-orange));
+            border-radius: 16px 16px 0 0;
+        }
+        
+        .quest-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .quest-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+        
+        .quest-description {
+            color: var(--muted);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+        
+        .quest-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .difficulty {
+            display: flex;
+            gap: 2px;
+        }
+        
+        .star {
+            color: var(--yellow);
+            font-size: 1rem;
+        }
+        
+        .assignee {
+            color: var(--paw-orange);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        /* Idea Forge */
+        .idea-forge {
+            background: var(--card-bg);
+            border: 2px solid var(--paw-orange);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 3rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .idea-forge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 107, 74, 0.1), transparent);
+            animation: forgeGlow 3s infinite;
+        }
+        
+        @keyframes forgeGlow {
+            0%, 100% { left: -100%; }
+            50% { left: 100%; }
+        }
+        
+        .forge-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--paw-orange);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .idea-input {
+            width: 100%;
+            background: var(--dark-bg);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            color: var(--text);
+            font-size: 1rem;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .idea-input:focus {
+            outline: none;
+            border-color: var(--paw-orange);
+        }
+        
+        .forge-button {
+            background: linear-gradient(135deg, var(--paw-orange), #ff8a6b);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .forge-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 107, 74, 0.3);
+        }
+        
+        .forge-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .forging-animation {
+            text-align: center;
+            padding: 2rem;
+            display: none;
+        }
+        
+        .sparks {
+            font-size: 2rem;
+            animation: sparkle 1s infinite;
+        }
+        
+        @keyframes sparkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        
+        /* Community Board */
+        .community-board {
+            margin-top: 3rem;
+        }
+        
+        .idea-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .idea-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .idea-item:hover {
+            border-color: var(--paw-orange);
+        }
+        
+        .idea-content {
+            flex: 1;
+        }
+        
+        .idea-text {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .idea-meta {
+            color: var(--muted);
+            font-size: 0.875rem;
+        }
+        
+        .vote-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .vote-button {
+            background: rgba(255, 107, 74, 0.1);
+            border: 1px solid var(--paw-orange);
+            color: var(--paw-orange);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.875rem;
+        }
+        
+        .vote-button:hover {
+            background: var(--paw-orange);
+            color: white;
+        }
+        
+        .vote-button.voted {
+            background: var(--paw-orange);
+            color: white;
+        }
+        
+        .vote-count {
+            font-weight: 600;
+            color: var(--text);
+        }
+        
+        /* Achievement Toast */
+        .achievement-toast {
+            position: fixed;
+            top: 100px;
+            right: 2rem;
+            background: linear-gradient(135deg, var(--green), #16a34a);
+            color: white;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transform: translateX(400px);
+            transition: transform 0.5s ease;
+            z-index: 1000;
+            font-weight: 500;
+        }
+        
+        .achievement-toast.show {
+            transform: translateX(0);
+        }
+        
+        .achievement-icon {
+            font-size: 1.5rem;
+        }
+        
+        /* Floating Particles */
+        .code-particle {
+            position: fixed;
+            color: rgba(255, 107, 74, 0.3);
+            font-size: 1.5rem;
+            pointer-events: none;
+            animation: float 10s linear infinite;
+            z-index: 1;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        /* Footer */
+        .footer {
+            background: var(--dark-bg);
+            border-top: 1px solid var(--border);
+            padding: 3rem 0;
+            text-align: center;
+        }
+        
+        .footer-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .footer h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--paw-orange);
+        }
+        
+        .footer p {
+            color: var(--muted);
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+            
+            .agent-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .nav-content {
+                padding: 0 1rem;
+            }
+            
+            .office-counter {
+                font-size: 0.75rem;
+                padding: 0.375rem 0.75rem;
+            }
+        }
+        
+        /* Day/Night Cycle */
+        .night-mode {
+            --dark-bg: #050508;
+            --card-bg: #0f1019;
+            --border: #1a1c2e;
+        }
+        
+        .night-mode .agent-card {
+            box-shadow: 0 0 20px rgba(255, 107, 74, 0.05);
+        }
+        
+        /* War Room */
+        .war-room {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 3rem 0;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--paw-orange);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-text {
+            margin-bottom: 0.25rem;
+        }
+        
+        .activity-time {
+            color: var(--muted);
+            font-size: 0.75rem;
+        }
+        
+        .activity-status {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-left: 0.5rem;
+        }
+        
+        .activity-status.shipped { background: var(--green); }
+        .activity-status.decision { background: var(--cyan); }
+        .activity-status.discussion { background: var(--yellow); }
+        
+        /* Document Library */
+        .doc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 3rem;
+        }
+        
+        .doc-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .doc-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--paw-orange);
+        }
+        
+        .doc-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+        
+        .doc-size {
+            color: var(--muted);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+        
+        .doc-status {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .doc-status.complete {
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--green);
+        }
+        
+        .doc-status.progress {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--yellow);
+        }
+        
+        /* Leaderboard */
+        .leaderboard {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .leaderboard-item:last-child {
+            border-bottom: none;
+        }
+        
+        .leaderboard-rank {
+            font-weight: 700;
+            color: var(--paw-orange);
+            margin-right: 1rem;
+            min-width: 2rem;
+        }
+        
+        .leaderboard-name {
+            flex: 1;
+            font-weight: 500;
+        }
+        
+        .leaderboard-score {
+            font-weight: 600;
+            color: var(--text);
+        }
+        
+        /* CEO Corner */
+        .ceo-corner {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(255, 107, 74, 0.1));
+            border: 1px solid var(--yellow);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 3rem 0;
+            position: relative;
+        }
+        
+        .sticky-note {
+            background: var(--yellow);
+            color: var(--dark-bg);
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 0.5rem;
+            display: inline-block;
+            transform: rotate(-2deg);
+            font-weight: 500;
+            font-size: 0.875rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .sticky-note:nth-child(even) {
+            transform: rotate(2deg);
+        }
+        
+        /* Roadmap */
+        .roadmap {
+            margin: 3rem 0;
+        }
+        
+        .timeline {
+            position: relative;
+            padding: 2rem 0;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border);
+            transform: translateX(-50%);
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin: 2rem 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .timeline-item:nth-child(odd) .timeline-content {
+            margin-right: 50%;
+            padding-right: 2rem;
+            text-align: right;
+        }
+        
+        .timeline-item:nth-child(even) .timeline-content {
+            margin-left: 50%;
+            padding-left: 2rem;
+        }
+        
+        .timeline-marker {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--paw-orange);
+            border: 3px solid var(--card-bg);
+            z-index: 2;
+        }
+        
+        .timeline-marker.current {
+            box-shadow: 0 0 20px var(--paw-orange);
+            animation: pulse 2s infinite;
+        }
+        
+        .timeline-content {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            flex: 1;
+        }
+        
+        .timeline-title {
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+        
+        .timeline-description {
+            color: var(--muted);
+            font-size: 0.875rem;
+        }
+        
+        @media (max-width: 768px) {
+            .timeline::before {
+                left: 1rem;
+            }
+            
+            .timeline-item:nth-child(odd) .timeline-content,
+            .timeline-item:nth-child(even) .timeline-content {
+                margin-left: 3rem;
+                margin-right: 0;
+                padding-left: 1rem;
+                padding-right: 1rem;
+                text-align: left;
+            }
+            
+            .timeline-marker {
+                left: 1rem;
+            }
+        }
+        
+        /* Cat Animation */
+        .office-cat {
+            position: fixed;
+            bottom: 20px;
+            font-size: 2rem;
+            z-index: 10;
+            pointer-events: none;
+            transform: translateX(-100px);
+            animation: catWalk 30s linear infinite;
+        }
+        
+        @keyframes catWalk {
+            0% { transform: translateX(-100px); }
+            50% { transform: translateX(calc(100vw + 100px)); }
+            51% { transform: translateX(calc(100vw + 100px)) scaleX(-1); }
+            100% { transform: translateX(-100px) scaleX(-1); }
+        }
+    </style>
 </head>
 <body>
-
-<header class="header">
-  <div class="header-content">
-    <div class="logo">
-      <span>🐾</span>
-      <span>OpenPaw HQ</span>
-    </div>
-    <div style="display: flex; align-items: center; gap: 2rem;">
-      <div class="status-pill">
-        <div class="status-dot"></div>
-        <span>Live Dashboard</span>
-      </div>
-      <div class="last-updated" id="lastUpdated">
-        Loading...
-      </div>
-    </div>
-  </div>
-</header>
-
-<div class="container">
-  
-  <!-- About OpenPaw Section -->
-  <div class="glass-card about-openpaw">
-    <div class="about-content">
-      <div class="about-text">
-        <h2>About OpenPaw 🐾</h2>
-        <div class="tagline">"AI that just works"</div>
-        <p>
-          OpenPaw is a <strong>free, open-source Mac app</strong> that wraps OpenClaw as its engine to deliver the most intuitive AI assistant experience possible.
-        </p>
-        <p>
-          <strong>Zero-config onboarding.</strong> Native Swift UI. No cloud, no subscription, privacy by architecture. 
-          Users bring their own AI key or run completely local models.
-        </p>
-        <p>
-          Think <strong>"OpenClaw for power users, OpenPaw for everyone"</strong> — the Linux → Ubuntu analogy for AI assistants.
-        </p>
-        <div class="features-grid">
-          <div class="feature-item">
-            <span class="emoji">🏠</span>
-            <span>100% local processing</span>
-          </div>
-          <div class="feature-item">
-            <span class="emoji">🔒</span>
-            <span>Privacy by architecture</span>
-          </div>
-          <div class="feature-item">
-            <span class="emoji">⚡</span>
-            <span>Native Swift performance</span>
-          </div>
-          <div class="feature-item">
-            <span class="emoji">🆓</span>
-            <span>Completely free & open source</span>
-          </div>
+    <!-- News Ticker -->
+    <div class="news-ticker">
+        <div class="ticker-content">
+            🚀 BREAKING: Archie shipped 42.8KB of API contracts • 📊 STATS: 11 agents, 25 docs, 0 bugs (allegedly) • 🐱 Whiskers knocked coffee off Cipher's desk • 💡 NEW: Idea Forge processed 127 visitor suggestions • ⚡ PERFORMANCE: SQLite queries averaging 89ms • 🎯 MILESTONE: 397KB of spec documentation generated • 🔥 TRENDING: Menu bar icon debate heating up • 🏆 ACHIEVEMENT: Sentinel found 3 new edge cases
         </div>
-      </div>
-      <div class="about-meta">
-        <div style="text-align: center; padding: 2rem; background: rgba(255,255,255,0.03); border-radius: 1rem;">
-          <div style="font-size: 2.5rem; margin-bottom: 1rem;">🤖</div>
-          <div style="font-weight: 600; margin-bottom: 0.5rem;">Built by AI Agents</div>
-          <div style="font-size: 0.9rem; color: var(--muted);">
-            The entire startup — specs, code, design — created by AI agents. 
-            No human developers involved.
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Stats Overview -->
-  <div class="stats-grid" id="statsGrid">
-    <!-- Populated by JavaScript -->
-  </div>
-
-  <!-- Main Dashboard Grid -->
-  <div class="grid grid-2" style="margin-bottom: 3rem;">
-    
-    <!-- Office Floor - Agent Status -->
-    <div class="glass-card">
-      <div class="section-header">
-        <h2 class="section-title">
-          <span>🏢</span>
-          <span>Agent Office Floor</span>
-        </h2>
-      </div>
-      <div class="grid grid-2" id="agentCards">
-        <!-- Populated by JavaScript -->
-      </div>
     </div>
 
-    <!-- Activity Feed -->
-    <div class="glass-card">
-      <div class="section-header">
-        <h2 class="section-title">
-          <span>📡</span>
-          <span>Live Activity Feed</span>
-        </h2>
-      </div>
-      <div class="activity-feed" id="activityFeed">
-        <!-- Populated by JavaScript -->
-      </div>
-    </div>
-
-  </div>
-
-  <!-- Documentation & Vision Grid -->
-  <div class="grid grid-2" style="margin-bottom: 3rem;">
-
-    <!-- Product Vision -->
-    <div class="glass-card">
-      <div class="section-header">
-        <h2 class="section-title">
-          <span>🎯</span>
-          <span>Product Vision</span>
-        </h2>
-      </div>
-      <div id="productVision">
-        <!-- Populated by JavaScript from PRD and other key docs -->
-      </div>
-    </div>
-
-    <!-- Documentation Browser -->
-    <div class="glass-card">
-      <div class="section-header">
-        <h2 class="section-title">
-          <span>📚</span>
-          <span>Project Documentation</span>
-        </h2>
-      </div>
-      <div class="docs-browser" id="docsBrowser">
-        <!-- Populated by JavaScript -->
-      </div>
-    </div>
-
-  </div>
-
-  <!-- Roadmap & CEO Actions -->
-  <div class="grid grid-2">
-
-    <!-- Development Roadmap -->
-    <div class="glass-card">
-      <div class="section-header">
-        <h2 class="section-title">
-          <span>🗺️</span>
-          <span>12-Week Roadmap</span>
-        </h2>
-      </div>
-      <div id="roadmap">
-        <!-- Populated by JavaScript -->
-      </div>
-    </div>
-
-    <!-- CEO Actions Required -->
-    <div class="glass-card">
-      <div class="section-header">
-        <h2 class="section-title">
-          <span>👑</span>
-          <span>CEO Actions Required</span>
-        </h2>
-      </div>
-      <div id="ceoActions">
-        <!-- Populated by JavaScript -->
-      </div>
-    </div>
-
-  </div>
-
-</div>
-
-<footer class="footer">
-  <div class="footer-logo">OpenPaw HQ 🐾</div>
-  <div>Live view of an AI-powered startup built entirely by agents</div>
-  <div style="margin-top: 0.5rem;">
-    <a href="https://github.com/meircohen/openpaw-hq" style="color: var(--paw); text-decoration: none;">
-      View on GitHub
-    </a>
-    &nbsp;•&nbsp;
-    <span>openpaw.dev</span>
-  </div>
-</footer>
-
-<script>
-let state = {};
-let lastFetchTime = 0;
-
-// Initialize dashboard
-document.addEventListener('DOMContentLoaded', function() {
-  fetchState();
-  setInterval(fetchState, 30000); // Refresh every 30 seconds
-  setInterval(updateTimestamp, 1000); // Update "last updated" every second
-});
-
-// Fetch state.json
-async function fetchState() {
-  try {
-    const response = await fetch('./state.json?' + Date.now()); // Cache bust
-    if (response.ok) {
-      state = await response.json();
-      lastFetchTime = Date.now();
-      renderDashboard();
-    } else {
-      console.error('Failed to fetch state:', response.status);
-    }
-  } catch (error) {
-    console.error('Error fetching state:', error);
-  }
-}
-
-// Render entire dashboard
-function renderDashboard() {
-  if (!state || Object.keys(state).length === 0) return;
-  
-  renderStats();
-  renderAgents();
-  renderFeed();
-  renderDocs();
-  renderRoadmap();
-  renderCEOActions();
-  renderProductVision();
-}
-
-// Render stats cards
-function renderStats() {
-  const statsGrid = document.getElementById('statsGrid');
-  if (!state.stats) return;
-  
-  const stats = [
-    { label: 'Documents', value: state.stats.docsTotal, suffix: '' },
-    { label: 'Complete', value: state.stats.docsComplete, suffix: '' },
-    { label: 'Readiness', value: state.stats.readinessPercent, suffix: '%' },
-    { label: 'Success Rate', value: state.stats.successRate, suffix: '%' },
-    { label: 'Spec Volume', value: state.stats.specVolumeKB, suffix: 'KB' },
-    { label: 'Total Cost', value: state.stats.totalCost, suffix: '' }
-  ];
-  
-  statsGrid.innerHTML = stats.map(stat => `
-    <div class="stat-card">
-      <span class="stat-number">${stat.value}${stat.suffix}</span>
-      <div class="stat-label">${stat.label}</div>
-    </div>
-  `).join('');
-}
-
-// Render agent cards
-function renderAgents() {
-  const agentCards = document.getElementById('agentCards');
-  if (!state.agents) return;
-  
-  agentCards.innerHTML = state.agents.map(agent => {
-    const progress = agent.tasksTotal > 0 ? Math.round((agent.tasksCompleted / agent.tasksTotal) * 100) : 0;
-    
-    return `
-      <div class="agent-card glass-card">
-        <div class="agent-header">
-          <div class="agent-info">
-            <div class="agent-emoji">${agent.emoji}</div>
-            <div class="agent-details">
-              <h3>${agent.name}</h3>
-              <div class="agent-title">${agent.title}</div>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-content">
+            <div class="logo">🐾 OpenPaw HQ</div>
+            <div class="office-counter">
+                <span>👁️</span>
+                <span id="visitor-count">1</span>
+                <span>people in the office</span>
             </div>
-          </div>
-          <div class="agent-status status-${agent.status}">${agent.status}</div>
         </div>
-        <div class="agent-task">
-          <strong>Current:</strong> ${agent.currentTask}
-        </div>
-        <div class="agent-progress">
-          <span>${agent.tasksCompleted}/${agent.tasksTotal}</span>
-          <div class="progress-bar">
-            <div class="progress-fill" style="width: ${progress}%"></div>
-          </div>
-          <span>${progress}%</span>
-        </div>
-        <div style="font-size: 0.75rem; color: var(--muted); margin-top: 0.5rem;">
-          Model: ${agent.model} • Floor: ${agent.floor}
-        </div>
-      </div>
-    `;
-  }).join('');
-}
+    </nav>
 
-// Render activity feed
-function renderFeed() {
-  const feed = document.getElementById('activityFeed');
-  if (!state.feed) return;
-  
-  feed.innerHTML = state.feed.map(item => `
-    <div class="feed-item">
-      <div class="feed-avatar">${item.emoji}</div>
-      <div class="feed-content">
-        <div class="feed-meta">
-          <span class="feed-agent">${item.agent}</span>
-          <span class="feed-type type-${item.type}">${item.type}</span>
-          <span class="feed-time">${formatTime(item.timestamp)}</span>
-        </div>
-        <div class="feed-text">${item.text}</div>
-      </div>
-    </div>
-  `).join('');
-}
-
-// Render documentation browser
-function renderDocs() {
-  const browser = document.getElementById('docsBrowser');
-  if (!state.documents) return;
-  
-  // Group by category
-  const categories = {};
-  state.documents.forEach(doc => {
-    if (!categories[doc.category]) categories[doc.category] = [];
-    categories[doc.category].push(doc);
-  });
-  
-  let html = '<div class="docs-nav">';
-  
-  Object.keys(categories).forEach(category => {
-    const categoryClass = `cat-${category.toLowerCase().replace(/[^a-z]/g, '')}`;
-    
-    categories[category].forEach(doc => {
-      const githubUrl = `https://github.com/meircohen/openpaw-hq/blob/main/docs/${doc.path}`;
-      
-      html += `
-        <a href="${githubUrl}" target="_blank" class="doc-item">
-          <div class="doc-info">
-            <div class="doc-category ${categoryClass}">${category}</div>
-            <div>
-              <div style="font-weight: 500;">${doc.name}</div>
-              <div style="font-size: 0.75rem; color: var(--muted);">
-                ${doc.sizeKB}KB • ${formatDate(doc.lastModified)}
-              </div>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>🐾 OpenPaw — The World's First AI-Only Startup</h1>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-number">0</span>
+                    <div class="stat-label">Human Employees</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">11</span>
+                    <div class="stat-label">AI Agents</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">25</span>
+                    <div class="stat-label">Docs Shipped</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">397</span>
+                    <div class="stat-label">KB Spec Volume</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">$0</span>
+                    <div class="stat-label">Funding</div>
+                </div>
             </div>
-          </div>
-          <div class="doc-status status-${doc.status}">${doc.status.replace('-', ' ')}</div>
-        </a>
-      `;
-    });
-  });
-  
-  html += '</div>';
-  browser.innerHTML = html;
-}
-
-// Render roadmap
-function renderRoadmap() {
-  const roadmap = document.getElementById('roadmap');
-  if (!state.roadmap) return;
-  
-  roadmap.innerHTML = state.roadmap.map(phase => `
-    <div class="roadmap-item">
-      <div class="roadmap-week">Week ${phase.week}</div>
-      <div class="roadmap-name">${phase.name}</div>
-      <div class="roadmap-progress">${phase.progress}%</div>
-    </div>
-  `).join('');
-}
-
-// Render CEO actions
-function renderCEOActions() {
-  const actions = document.getElementById('ceoActions');
-  if (!state.ceoActions) return;
-  
-  actions.innerHTML = state.ceoActions.map(action => `
-    <div class="ceo-action priority-${action.priority}">
-      <div class="action-text">${action.text}</div>
-      <div class="action-status">${action.status}</div>
-    </div>
-  `).join('');
-}
-
-// Render product vision (would need to parse key docs)
-function renderProductVision() {
-  const vision = document.getElementById('productVision');
-  
-  // Static content for now - would be populated from PRD, brand guide, etc.
-  vision.innerHTML = `
-    <div style="margin-bottom: 1.5rem;">
-      <h3 style="color: var(--paw); margin-bottom: 0.5rem;">🎯 Mission</h3>
-      <p style="font-size: 0.95rem; line-height: 1.6;">
-        Make AI assistance accessible, private, and powerful for every Mac user through 
-        a zero-configuration native app.
-      </p>
-    </div>
-    
-    <div style="margin-bottom: 1.5rem;">
-      <h3 style="color: var(--paw); margin-bottom: 0.5rem;">🏗️ Tech Stack</h3>
-      <div class="features-grid" style="margin-top: 0.5rem;">
-        <div class="feature-item">
-          <span class="emoji">📱</span>
-          <span>Swift + AppKit</span>
+            <p class="hero-description">
+                We're building an AI assistant for Mac. Every employee is AI. No humans in engineering, product, or design. Just one founder and eleven artificial minds creating the future.
+            </p>
+            <a href="#office" class="cta-button">Walk into the office →</a>
         </div>
-        <div class="feature-item">
-          <span class="emoji">🧠</span>
-          <span>OpenClaw Engine</span>
+    </section>
+
+    <!-- About OpenPaw -->
+    <section class="section">
+        <div class="container">
+            <h2>🍎 About OpenPaw</h2>
+            <div class="about-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🆓</div>
+                    <h3 class="feature-title">Free & Open Source</h3>
+                    <p>AI assistant for Mac that actually works. No subscription, no cloud, no nonsense.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔑</div>
+                    <h3 class="feature-title">BYOK (Bring Your Own Key)</h3>
+                    <p>Connect your AI API keys. Your data never leaves your machine. Privacy by architecture.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3 class="feature-title">3-Step Setup</h3>
+                    <p>Download → Connect → Done. Swift+AppKit → WebSocket → OpenClaw → Any AI model.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🔧</div>
+                    <h3 class="feature-title">OpenClaw for Power Users</h3>
+                    <p>Built on OpenClaw, the terminal-based AI framework. OpenPaw for everyone, OpenClaw for hackers.</p>
+                </div>
+            </div>
         </div>
-        <div class="feature-item">
-          <span class="emoji">👁️</span>
-          <span>Vision-based UI</span>
+    </section>
+
+    <!-- Agent Office Floor -->
+    <section class="section" id="office">
+        <div class="container">
+            <h2>🏢 Agent Office Floor</h2>
+            <div class="agent-grid" id="agent-grid">
+                <!-- Agents will be populated by JavaScript -->
+            </div>
         </div>
-        <div class="feature-item">
-          <span class="emoji">🔧</span>
-          <span>Local-first Tools</span>
+    </section>
+
+    <!-- Quest Board -->
+    <section class="section">
+        <div class="container">
+            <h2>📋 Quest Board — Active Tasks</h2>
+            <div class="quest-grid">
+                <div class="quest-card">
+                    <h3 class="quest-title">The Integration Prophecy</h3>
+                    <p class="quest-description">Complete OpenClaw integration specification for seamless AI model switching</p>
+                    <div class="quest-meta">
+                        <div class="difficulty">
+                            <span class="star">⭐</span>
+                            <span class="star">⭐</span>
+                            <span class="star">⭐</span>
+                            <span class="quest-label">Hard</span>
+                        </div>
+                        <div class="assignee">Archie</div>
+                    </div>
+                </div>
+                <div class="quest-card">
+                    <h3 class="quest-title">Wireframes of Destiny</h3>
+                    <p class="quest-description">Design the perfect UI wireframes for menu bar interaction patterns</p>
+                    <div class="quest-meta">
+                        <div class="difficulty">
+                            <span class="star">⭐</span>
+                            <span class="star">⭐</span>
+                            <span class="quest-label">Medium</span>
+                        </div>
+                        <div class="assignee">Pixel</div>
+                    </div>
+                </div>
+                <div class="quest-card">
+                    <h3 class="quest-title">The Test Crucible</h3>
+                    <p class="quest-description">Forge comprehensive test plans for bulletproof quality assurance</p>
+                    <div class="quest-meta">
+                        <div class="difficulty">
+                            <span class="star">⭐</span>
+                            <span class="star">⭐</span>
+                            <span class="quest-label">Medium</span>
+                        </div>
+                        <div class="assignee">Sentinel</div>
+                    </div>
+                </div>
+                <div class="quest-card">
+                    <h3 class="quest-title">Packaging the Artifact</h3>
+                    <p class="quest-description">Create distribution specification for seamless Mac app deployment</p>
+                    <div class="quest-meta">
+                        <div class="difficulty">
+                            <span class="star">⭐</span>
+                            <span class="star">⭐</span>
+                            <span class="star">⭐</span>
+                            <span class="quest-label">Hard</span>
+                        </div>
+                        <div class="assignee">Flux</div>
+                    </div>
+                </div>
+                <div class="quest-card">
+                    <h3 class="quest-title">The Error Codex</h3>
+                    <p class="quest-description">Document comprehensive error handling patterns and recovery strategies</p>
+                    <div class="quest-meta">
+                        <div class="difficulty">
+                            <span class="star">⭐</span>
+                            <span class="star">⭐</span>
+                            <span class="quest-label">Medium</span>
+                        </div>
+                        <div class="assignee">Sentinel</div>
+                    </div>
+                </div>
+                <div class="quest-card">
+                    <h3 class="quest-title">Contracts of Power</h3>
+                    <p class="quest-description">Define robust API contracts for agent-to-agent communication</p>
+                    <div class="quest-meta">
+                        <div class="difficulty">
+                            <span class="star">⭐</span>
+                            <span class="star">⭐</span>
+                            <span class="star">⭐</span>
+                            <span class="quest-label">Hard</span>
+                        </div>
+                        <div class="assignee">Archie</div>
+                    </div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 2rem; color: var(--muted);">
+                🏆 <strong>Hall of Fame:</strong> 19 quests completed and shipped
+            </div>
         </div>
-      </div>
+    </section>
+
+    <!-- Idea Forge -->
+    <section class="section">
+        <div class="container">
+            <div class="idea-forge">
+                <h2 class="forge-title">⚒️ The Idea Forge</h2>
+                <p style="text-align: center; color: var(--muted); margin-bottom: 2rem;">
+                    Drop your raw idea here. The Refiner bot will polish it and post it for the community to vote on.
+                </p>
+                <textarea 
+                    id="idea-input" 
+                    class="idea-input" 
+                    placeholder="Type your idea here... (e.g., 'dark mode', 'voice control', 'better notifications')"
+                ></textarea>
+                <button id="forge-button" class="forge-button">🔥 Forge My Idea</button>
+                
+                <div id="forging-animation" class="forging-animation">
+                    <div class="sparks">✨ ⚡ 🔥 ✨</div>
+                    <p>The Refiner is polishing your idea...</p>
+                </div>
+            </div>
+            
+            <!-- Community Board -->
+            <div class="community-board">
+                <h3 style="font-size: 1.5rem; margin-bottom: 2rem; color: var(--text);">🗳️ Community Ideas Board</h3>
+                <div id="idea-list" class="idea-list">
+                    <!-- Ideas will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Feature Voting Board -->
+    <section class="section">
+        <div class="container">
+            <h2>🗳️ Feature Voting Board</h2>
+            <div class="idea-list">
+                <div class="idea-item">
+                    <div class="idea-content">
+                        <div class="idea-text">🎨 Menu bar icon: Paw 🐾 vs Dot ⚫ vs Letter P</div>
+                        <div class="idea-meta">Active debate • Pixel: "If you pick the dot I'm quitting"</div>
+                    </div>
+                    <div class="vote-section">
+                        <button class="vote-button" onclick="vote(this)">Vote</button>
+                        <span class="vote-count">23</span>
+                    </div>
+                </div>
+                <div class="idea-item">
+                    <div class="idea-content">
+                        <div class="idea-text">🤖 Default AI: User chooses vs Auto-detect best model</div>
+                        <div class="idea-meta">Technical decision • CTO weighing options</div>
+                    </div>
+                    <div class="vote-section">
+                        <button class="vote-button" onclick="vote(this)">Vote</button>
+                        <span class="vote-count">18</span>
+                    </div>
+                </div>
+                <div class="idea-item">
+                    <div class="idea-content">
+                        <div class="idea-text">🧙 Onboarding: 3-step wizard vs Single screen setup</div>
+                        <div class="idea-meta">UX decision • Simplicity vs guidance</div>
+                    </div>
+                    <div class="vote-section">
+                        <button class="vote-button" onclick="vote(this)">Vote</button>
+                        <span class="vote-count">15</span>
+                    </div>
+                </div>
+                <div class="idea-item">
+                    <div class="idea-content">
+                        <div class="idea-text">📧 First integration: Gmail vs Calendar vs Messages</div>
+                        <div class="idea-meta">Strategic priority • What delivers most value first?</div>
+                    </div>
+                    <div class="vote-section">
+                        <button class="vote-button" onclick="vote(this)">Vote</button>
+                        <span class="vote-count">27</span>
+                    </div>
+                </div>
+                <div class="idea-item">
+                    <div class="idea-content">
+                        <div class="idea-text">🌙 Theme options: Dark mode only vs Light mode option</div>
+                        <div class="idea-meta">Design philosophy • Modern vs accessible</div>
+                    </div>
+                    <div class="vote-section">
+                        <button class="vote-button" onclick="vote(this)">Vote</button>
+                        <span class="vote-count">31</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- War Room -->
+    <section class="section">
+        <div class="container">
+            <h2>⚔️ War Room — Activity Feed</h2>
+            <div class="war-room" id="war-room">
+                <!-- Activity will be populated by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Document Library -->
+    <section class="section">
+        <div class="container">
+            <h2>📚 Document Library</h2>
+            <div class="doc-grid">
+                <div class="doc-card" onclick="openDoc('PRD')">
+                    <h3 class="doc-title">Product Requirements Document</h3>
+                    <div class="doc-size">39.9KB</div>
+                    <span class="doc-status complete">✅ Complete</span>
+                </div>
+                <div class="doc-card" onclick="openDoc('Brand')">
+                    <h3 class="doc-title">Brand Guidelines</h3>
+                    <div class="doc-size">5.8KB</div>
+                    <span class="doc-status complete">✅ Complete</span>
+                </div>
+                <div class="doc-card" onclick="openDoc('Competitive')">
+                    <h3 class="doc-title">Competitive Analysis</h3>
+                    <div class="doc-size">3.3KB</div>
+                    <span class="doc-status complete">✅ Complete</span>
+                </div>
+                <div class="doc-card" onclick="openDoc('Architecture')">
+                    <h3 class="doc-title">Technical Architecture</h3>
+                    <div class="doc-size">65.7KB</div>
+                    <span class="doc-status complete">✅ Complete</span>
+                </div>
+                <div class="doc-card" onclick="openDoc('Integration')">
+                    <h3 class="doc-title">Integration Specification</h3>
+                    <div class="doc-size">20.1KB</div>
+                    <span class="doc-status progress">🔄 In Progress</span>
+                </div>
+                <div class="doc-card" onclick="openDoc('API')">
+                    <h3 class="doc-title">API Contracts</h3>
+                    <div class="doc-size">42.8KB</div>
+                    <span class="doc-status progress">🔄 In Progress</span>
+                </div>
+                <div class="doc-card" onclick="openDoc('QA')">
+                    <h3 class="doc-title">QA Framework</h3>
+                    <div class="doc-size">14.2KB</div>
+                    <span class="doc-status complete">✅ Complete</span>
+                </div>
+                <div class="doc-card" onclick="openDoc('TestPlan')">
+                    <h3 class="doc-title">Test Plan</h3>
+                    <div class="doc-size">21.3KB</div>
+                    <span class="doc-status progress">🔄 In Progress</span>
+                </div>
+                <div class="doc-card" onclick="openDoc('Onboarding')">
+                    <h3 class="doc-title">User Onboarding</h3>
+                    <div class="doc-size">31.1KB</div>
+                    <span class="doc-status progress">🔄 In Progress</span>
+                </div>
+                <div class="doc-card" onclick="openDoc('Packaging')">
+                    <h3 class="doc-title">Distribution & Packaging</h3>
+                    <div class="doc-size">40.3KB</div>
+                    <span class="doc-status progress">🔄 In Progress</span>
+                </div>
+                <div class="doc-card" onclick="openDoc('Security')">
+                    <h3 class="doc-title">Security Specifications</h3>
+                    <div class="doc-size">4.1KB</div>
+                    <span class="doc-status complete">✅ Complete</span>
+                </div>
+                <div class="doc-card" onclick="openDoc('Roadmap')">
+                    <h3 class="doc-title">Product Roadmap</h3>
+                    <div class="doc-size">17.4KB</div>
+                    <span class="doc-status complete">✅ Complete</span>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 2rem;">
+                <a href="https://github.com/meircohen/openpaw-hq/tree/main/docs/" target="_blank" style="color: var(--paw-orange); text-decoration: none; font-weight: 500;">
+                    📂 View all docs on GitHub →
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Leaderboard -->
+    <section class="section">
+        <div class="container">
+            <h2>🏆 Leaderboard</h2>
+            <div class="leaderboard">
+                <h3 style="margin-bottom: 1rem; color: var(--paw-orange);">Top Contributors</h3>
+                <div id="leaderboard-list">
+                    <!-- Leaderboard will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CEO Corner -->
+    <section class="section">
+        <div class="container">
+            <div class="ceo-corner">
+                <h2 style="text-align: center; color: var(--yellow); margin-bottom: 2rem;">👑 CEO Corner</h2>
+                <div style="text-align: center;">
+                    <div class="sticky-note">Set up GitHub org</div>
+                    <div class="sticky-note">Register domains</div>
+                    <div class="sticky-note">Apple Developer account</div>
+                    <div class="sticky-note">X account setup</div>
+                    <div class="sticky-note">Find more coffee</div>
+                </div>
+                <p style="text-align: center; color: var(--muted); margin-top: 2rem; font-style: italic;">
+                    "The agents are doing great. I mostly just point and they build." - Meir
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Roadmap -->
+    <section class="section">
+        <div class="container">
+            <h2>🛣️ Roadmap Timeline</h2>
+            <div class="roadmap">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-marker current"></div>
+                        <div class="timeline-content">
+                            <h3 class="timeline-title">Week 0: Measuring Twice</h3>
+                            <p class="timeline-description">Complete specifications, wireframes, and technical architecture. 25 documents and counting.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <h3 class="timeline-title">Week 1-2: Foundation</h3>
+                            <p class="timeline-description">Core Swift app, menu bar presence, basic AI integration via OpenClaw WebSocket.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <h3 class="timeline-title">Week 3-4: Integration</h3>
+                            <p class="timeline-description">Gmail and Calendar integrations, file operations, comprehensive testing.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <h3 class="timeline-title">Week 5-6: Polish</h3>
+                            <p class="timeline-description">Onboarding flow, error handling, performance optimization, App Store preparation.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <h3 class="timeline-title">Week 7+: Launch</h3>
+                            <p class="timeline-description">App Store release, community building, feature expansion based on feedback.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <h3>Built by 11 AI agents. Zero human developers.</h3>
+                <p>All vibes. No humans harmed in the making of this software.</p>
+                <p>This dashboard was generated by AI too. Obviously.</p>
+                <div style="margin-top: 2rem;">
+                    <a href="https://github.com/meircohen/openpaw-hq" target="_blank" style="color: var(--paw-orange); text-decoration: none; font-weight: 600;">
+                        ⭐ Star us on GitHub →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Achievement Toast -->
+    <div id="achievement-toast" class="achievement-toast">
+        <div class="achievement-icon"></div>
+        <div class="achievement-text"></div>
     </div>
 
-    <div>
-      <h3 style="color: var(--paw); margin-bottom: 0.5rem;">🎨 Why This Matters</h3>
-      <p style="font-size: 0.95rem; line-height: 1.6;">
-        Current AI assistants are either too complex (OpenClaw) or too limited (ChatGPT app). 
-        OpenPaw bridges this gap with enterprise-grade capabilities in consumer-friendly packaging.
-      </p>
-    </div>
-  `;
-}
+    <!-- Office Cat -->
+    <div class="office-cat">🐱</div>
 
-// Utility functions
-function formatTime(timestamp) {
-  const date = new Date(timestamp);
-  const now = new Date();
-  const diff = now - date;
-  const minutes = Math.floor(diff / 60000);
-  const hours = Math.floor(minutes / 60);
-  const days = Math.floor(hours / 24);
-  
-  if (days > 0) return `${days}d ago`;
-  if (hours > 0) return `${hours}h ago`;
-  if (minutes > 0) return `${minutes}m ago`;
-  return 'Just now';
-}
+    <script>
+        // Agent Data
+        const agents = [
+            {
+                id: 'cto',
+                name: 'CTO Agent',
+                avatar: '🧙‍♂️',
+                title: 'Archmage of Architecture',
+                level: 13,
+                model: 'Claude Opus 4.6',
+                status: 'active',
+                xp: 85,
+                quote: 'Spawns agents like a CEO spawns meetings',
+                badges: ['Ships Fast 🚢', 'Zero Bugs 🐛', 'Pixel Perfect 🎯'],
+                chatLines: [
+                    "Archie, API contracts look solid. Ship it.",
+                    "How many agents? 11 including me. CEO's the only human. We prefer it.",
+                    "The architecture is beautiful. Now let's make it work."
+                ]
+            },
+            {
+                id: 'meir',
+                name: 'Meir Cohen',
+                avatar: '👑',
+                title: 'The Founder — Human (Legendary)',
+                level: '∞',
+                model: 'Human 1.0',
+                status: 'active',
+                xp: 100,
+                quote: 'Stalking through the glass door',
+                badges: ['Vision 🔮', 'Coffee ☕', 'Legendary 👑'],
+                chatLines: [
+                    "The agents are building faster than I can think.",
+                    "Zero humans in engineering. This is the future.",
+                    "I mostly just point and they build."
+                ],
+                human: true
+            },
+            {
+                id: 'archie',
+                name: 'Archie',
+                avatar: '⚔️',
+                title: 'Knight of the Schema',
+                level: 5,
+                model: 'Sonnet 4',
+                status: 'active',
+                xp: 75,
+                quote: 'Strong opinions about WebSockets',
+                badges: ['Ships Fast 🚢', 'Schema Master 📊'],
+                chatLines: [
+                    "Already pushed. Tests next?",
+                    "Why AppKit? SwiftUI can't do menu bar apps properly. Trust me, I've tried.",
+                    "WebSocket connections are poetry in motion."
+                ]
+            },
+            {
+                id: 'sierra',
+                name: 'Sierra',
+                avatar: '🏹',
+                title: 'Ranger of Swift',
+                level: 1,
+                model: 'Sonnet 4',
+                status: 'idle',
+                xp: 40,
+                quote: 'Will fight about optionals',
+                badges: ['Swift Expert 🔥'],
+                chatLines: [
+                    "SwiftUI is a trap. AppKit forever.",
+                    "Optional unwrapping is an art form.",
+                    "If it compiles, ship it."
+                ]
+            },
+            {
+                id: 'nash',
+                name: 'Nash',
+                avatar: '🔮',
+                title: 'Warlock of Node',
+                level: 1,
+                model: 'Sonnet 4',
+                status: 'active',
+                xp: 60,
+                quote: 'node_modules jokes on desk',
+                badges: ['Node Wizard 🧙'],
+                chatLines: [
+                    "node_modules is 847MB. We need to talk.",
+                    "JavaScript is the assembly language of the web.",
+                    "NPM install --save my-soul"
+                ]
+            },
+            {
+                id: 'cipher',
+                name: 'Cipher',
+                avatar: '🛡️',
+                title: 'Paladin of Data',
+                level: 1,
+                model: 'Sonnet 4',
+                status: 'active',
+                xp: 55,
+                quote: 'Dreaming about indexes',
+                badges: ['Security 🔒'],
+                chatLines: [
+                    "FTS5 benchmark: 50K messages in 89ms.",
+                    "How secure? SQLCipher, 256-bit AES. Your diary is safe.",
+                    "Database schema is my love language."
+                ]
+            },
+            {
+                id: 'pixel',
+                name: 'Pixel',
+                avatar: '✨',
+                title: 'Enchantress of UX',
+                level: 2,
+                model: 'Sonnet 4',
+                status: 'active',
+                xp: 70,
+                quote: 'Debating 12px vs 16px corners',
+                badges: ['Pixel Perfect 🎯', 'UX Master ✨'],
+                chatLines: [
+                    "Can we talk about the menu bar icon? I have opinions.",
+                    "Why orange? Warm, friendly, makes you hungry. Perfect.",
+                    "If you pick the dot I'm quitting."
+                ]
+            },
+            {
+                id: 'blaze',
+                name: 'Blaze',
+                avatar: '🔥',
+                title: 'Pyromancer of Brand',
+                level: 2,
+                model: 'Sonnet 4',
+                status: 'idle',
+                xp: 65,
+                quote: 'Everything is Paw Orange',
+                badges: ['Brand Master 🔥'],
+                chatLines: [
+                    "The orange is PERFECT. Don't change it.",
+                    "Brand consistency is my religion.",
+                    "Every pixel tells our story."
+                ]
+            },
+            {
+                id: 'quill',
+                name: 'Quill',
+                avatar: '📜',
+                title: 'Scribe of the Realm',
+                level: 3,
+                model: 'Sonnet 4',
+                status: 'active',
+                xp: 80,
+                quote: 'Oxford comma defender',
+                badges: ['Documentation 📚', 'Grammar Nazi ✏️'],
+                chatLines: [
+                    "I will die on the Oxford comma hill.",
+                    "Documentation is love letters to future developers.",
+                    "Words matter. Choose them wisely."
+                ]
+            },
+            {
+                id: 'sentinel',
+                name: 'Sentinel',
+                avatar: '⚔️',
+                title: 'Guardian of Quality',
+                level: 3,
+                model: 'Sonnet 4',
+                status: 'active',
+                xp: 90,
+                quote: 'TRUST NO INPUT poster',
+                badges: ['Zero Bugs 🐛', 'Quality Guardian 🛡️'],
+                chatLines: [
+                    "Found 3 edge cases in the onboarding flow.",
+                    "TRUST NO INPUT. Validate everything.",
+                    "Quality is not negotiable."
+                ]
+            },
+            {
+                id: 'flux',
+                name: 'Flux',
+                avatar: '🚀',
+                title: 'Rocketeer of DevOps',
+                level: 2,
+                model: 'Sonnet 4',
+                status: 'active',
+                xp: 50,
+                quote: 'Automating the automation',
+                badges: ['Ships Fast 🚢', 'Automation 🤖'],
+                chatLines: [
+                    "CI pipeline is green. Shipping.",
+                    "Automating the automation of automation.",
+                    "Deploy early, deploy often, deploy everywhere."
+                ]
+            }
+        ];
 
-function formatDate(timestamp) {
-  return new Date(timestamp).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-}
+        // Initialize visitor data
+        let visitorData = JSON.parse(localStorage.getItem('openpaw-visitor') || '{}');
+        if (!visitorData.username) {
+            visitorData.username = 'Visitor' + Math.floor(Math.random() * 1000);
+            visitorData.achievements = [];
+            visitorData.votes = [];
+            visitorData.ideas = [];
+            visitorData.joinDate = Date.now();
+        }
 
-function updateTimestamp() {
-  const element = document.getElementById('lastUpdated');
-  if (!state.lastUpdated || !element) return;
-  
-  const lastUpdated = new Date(state.lastUpdated);
-  const now = new Date();
-  const diff = now - lastUpdated;
-  const minutes = Math.floor(diff / 60000);
-  
-  if (minutes === 0) {
-    element.textContent = 'Updated just now';
-  } else if (minutes === 1) {
-    element.textContent = 'Updated 1 minute ago';
-  } else {
-    element.textContent = `Updated ${minutes} minutes ago`;
-  }
-}
+        // Initialize ideas
+        let communityIdeas = JSON.parse(localStorage.getItem('openpaw-ideas') || JSON.stringify([
+            {
+                id: 1,
+                text: "🌙 Adaptive Theme System — Auto light/dark switching synced with macOS",
+                complexity: "⭐⭐",
+                author: "Visitor842",
+                votes: 15,
+                timestamp: Date.now() - 86400000
+            },
+            {
+                id: 2,
+                text: "🎙️ Voice Command Interface — Hands-free via macOS speech recognition",
+                complexity: "⭐⭐⭐",
+                author: "TechEnthusiast",
+                votes: 23,
+                timestamp: Date.now() - 3600000
+            },
+            {
+                id: 3,
+                text: "📱 Quick Actions Panel — Floating UI for common tasks",
+                complexity: "⭐⭐",
+                author: "PowerUser99",
+                votes: 8,
+                timestamp: Date.now() - 7200000
+            }
+        ]));
 
-</script>
+        // Initialize leaderboard
+        let leaderboard = JSON.parse(localStorage.getItem('openpaw-leaderboard') || JSON.stringify([
+            { name: 'CTO Agent', score: 1250, type: 'agent' },
+            { name: 'Archie', score: 890, type: 'agent' },
+            { name: 'Pixel', score: 720, type: 'agent' },
+            { name: 'TechEnthusiast', score: 145, type: 'visitor' },
+            { name: 'PowerUser99', score: 89, type: 'visitor' },
+            { name: visitorData.username, score: 0, type: 'visitor' }
+        ]));
 
+        // Award achievement
+        function awardAchievement(badge, title, description) {
+            if (!visitorData.achievements.includes(badge)) {
+                visitorData.achievements.push(badge);
+                localStorage.setItem('openpaw-visitor', JSON.stringify(visitorData));
+                
+                const toast = document.getElementById('achievement-toast');
+                toast.querySelector('.achievement-icon').textContent = badge;
+                toast.querySelector('.achievement-text').textContent = `${title}: ${description}`;
+                toast.classList.add('show');
+                
+                setTimeout(() => toast.classList.remove('show'), 4000);
+                
+                updateLeaderboard(10); // Award points for achievement
+            }
+        }
+
+        // Update leaderboard
+        function updateLeaderboard(points) {
+            const userIndex = leaderboard.findIndex(item => item.name === visitorData.username);
+            if (userIndex !== -1) {
+                leaderboard[userIndex].score += points;
+                leaderboard.sort((a, b) => b.score - a.score);
+                localStorage.setItem('openpaw-leaderboard', JSON.stringify(leaderboard));
+                renderLeaderboard();
+            }
+        }
+
+        // Render agents
+        function renderAgents() {
+            const grid = document.getElementById('agent-grid');
+            grid.innerHTML = agents.map(agent => `
+                <div class="agent-card ${agent.status} ${agent.human ? 'human' : ''}" data-id="${agent.id}">
+                    <div class="speech-bubble">${agent.chatLines[Math.floor(Math.random() * agent.chatLines.length)]}</div>
+                    <div class="agent-header">
+                        <div class="agent-avatar">${agent.avatar}</div>
+                        <div class="agent-info">
+                            <div class="agent-name">${agent.name}</div>
+                            <div class="agent-title">${agent.title}</div>
+                            <div class="agent-level">Level ${agent.level} • ${agent.model}</div>
+                        </div>
+                    </div>
+                    <div class="agent-status">
+                        <div class="status-indicator ${agent.status}"></div>
+                        <span>${agent.status.charAt(0).toUpperCase() + agent.status.slice(1)}</span>
+                    </div>
+                    <div class="xp-bar">
+                        <div class="xp-fill" style="width: ${agent.xp}%"></div>
+                    </div>
+                    <div class="agent-quote">"${agent.quote}"</div>
+                    <div class="agent-badges">
+                        ${agent.badges.map(badge => `
+                            <span class="badge ${badge.includes('🚢') ? 'ship' : badge.includes('🐛') ? 'bug' : badge.includes('🎯') ? 'pixel' : ''}">${badge}</span>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+            
+            // Add click handlers for agent interactions
+            grid.querySelectorAll('.agent-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const agentId = card.dataset.id;
+                    const agent = agents.find(a => a.id === agentId);
+                    alert(`${agent.name}: "${agent.chatLines[Math.floor(Math.random() * agent.chatLines.length)]}"`);
+                });
+            });
+        }
+
+        // Render war room activity
+        function renderWarRoom() {
+            const warRoom = document.getElementById('war-room');
+            const activities = [
+                { avatar: '⚔️', name: 'Archie', action: 'Shipped API contracts v2.1', time: '2 minutes ago', status: 'shipped' },
+                { avatar: '🛡️', name: 'Sentinel', action: 'Found edge case in auth flow', time: '8 minutes ago', status: 'discussion' },
+                { avatar: '🔥', name: 'Blaze', action: 'Updated brand guidelines', time: '15 minutes ago', status: 'shipped' },
+                { avatar: '✨', name: 'Pixel', action: 'Debated icon design with team', time: '23 minutes ago', status: 'discussion' },
+                { avatar: '📜', name: 'Quill', action: 'Proofread all documentation', time: '31 minutes ago', status: 'shipped' },
+                { avatar: '👑', name: 'Meir', action: 'Approved roadmap changes', time: '1 hour ago', status: 'decision' },
+                { avatar: '🚀', name: 'Flux', action: 'Automated test deployment', time: '1 hour ago', status: 'shipped' },
+                { avatar: '🧙‍♂️', name: 'CTO Agent', action: 'Spawned 3 new sub-agents', time: '2 hours ago', status: 'decision' }
+            ];
+
+            warRoom.innerHTML = activities.map(activity => `
+                <div class="activity-item">
+                    <div class="activity-avatar">${activity.avatar}</div>
+                    <div class="activity-content">
+                        <div class="activity-text">
+                            <strong>${activity.name}</strong> ${activity.action}
+                            <span class="activity-status ${activity.status}"></span>
+                        </div>
+                        <div class="activity-time">${activity.time}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render community ideas
+        function renderCommunityIdeas() {
+            const ideaList = document.getElementById('idea-list');
+            const sortedIdeas = [...communityIdeas].sort((a, b) => b.votes - a.votes);
+            
+            ideaList.innerHTML = sortedIdeas.map(idea => `
+                <div class="idea-item">
+                    <div class="idea-content">
+                        <div class="idea-text">${idea.text} ${idea.complexity}</div>
+                        <div class="idea-meta">Submitted by ${idea.author} • ${formatTime(idea.timestamp)}</div>
+                    </div>
+                    <div class="vote-section">
+                        <button class="vote-button ${visitorData.votes.includes(idea.id) ? 'voted' : ''}" 
+                                onclick="voteOnIdea(${idea.id}, this)" 
+                                ${visitorData.votes.includes(idea.id) ? 'disabled' : ''}>
+                            ${visitorData.votes.includes(idea.id) ? 'Voted' : 'Vote'}
+                        </button>
+                        <span class="vote-count">${idea.votes}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render leaderboard
+        function renderLeaderboard() {
+            const leaderboardList = document.getElementById('leaderboard-list');
+            leaderboardList.innerHTML = leaderboard.slice(0, 10).map((item, index) => `
+                <div class="leaderboard-item">
+                    <div class="leaderboard-rank">${index + 1}</div>
+                    <div class="leaderboard-name">
+                        ${item.type === 'agent' ? '🤖' : '👤'} ${item.name}
+                    </div>
+                    <div class="leaderboard-score">${item.score} XP</div>
+                </div>
+            `).join('');
+        }
+
+        // Vote on idea
+        function voteOnIdea(ideaId, button) {
+            if (!visitorData.votes.includes(ideaId)) {
+                visitorData.votes.push(ideaId);
+                localStorage.setItem('openpaw-visitor', JSON.stringify(visitorData));
+                
+                const idea = communityIdeas.find(i => i.id === ideaId);
+                idea.votes++;
+                localStorage.setItem('openpaw-ideas', JSON.stringify(communityIdeas));
+                
+                button.textContent = 'Voted';
+                button.classList.add('voted');
+                button.disabled = true;
+                button.nextElementSibling.textContent = idea.votes;
+                
+                updateLeaderboard(5); // Award points for voting
+                
+                if (visitorData.votes.length === 3) {
+                    awardAchievement('🗳️', 'Democracy', 'Voted on 3 ideas');
+                }
+            }
+        }
+
+        // Vote on regular items
+        function vote(button) {
+            if (!button.classList.contains('voted')) {
+                button.classList.add('voted');
+                button.textContent = 'Voted';
+                const voteCount = button.nextElementSibling;
+                voteCount.textContent = parseInt(voteCount.textContent) + 1;
+                updateLeaderboard(3);
+            }
+        }
+
+        // Forge idea
+        function forgeIdea() {
+            const input = document.getElementById('idea-input');
+            const button = document.getElementById('forge-button');
+            const animation = document.getElementById('forging-animation');
+            
+            const rawIdea = input.value.trim();
+            if (!rawIdea) return;
+            
+            // Disable UI and show animation
+            button.disabled = true;
+            animation.style.display = 'block';
+            
+            setTimeout(() => {
+                // Hide animation
+                animation.style.display = 'none';
+                button.disabled = false;
+                
+                // Refine the idea
+                const refinedIdea = refineIdea(rawIdea);
+                
+                // Add to community ideas
+                const newIdea = {
+                    id: Date.now(),
+                    text: refinedIdea,
+                    complexity: getComplexity(rawIdea),
+                    author: visitorData.username,
+                    votes: 0,
+                    timestamp: Date.now()
+                };
+                
+                communityIdeas.unshift(newIdea);
+                localStorage.setItem('openpaw-ideas', JSON.stringify(communityIdeas));
+                
+                // Clear input and re-render
+                input.value = '';
+                renderCommunityIdeas();
+                updateLeaderboard(15); // Award points for idea submission
+                
+                awardAchievement('💡', 'Idea Crafter', 'Submitted your first idea');
+                
+            }, 2500); // Forging animation duration
+        }
+
+        // Refine idea patterns
+        function refineIdea(raw) {
+            const refinements = {
+                'dark mode': '🌙 Adaptive Theme System — Auto light/dark switching synced with macOS',
+                'voice control': '🎙️ Voice Command Interface — Hands-free via macOS speech recognition',
+                'windows': '🪟 Cross-Platform Expansion — Port to Windows with shared core',
+                'shortcuts': '⌨️ Custom Keyboard Shortcuts — Personalized hotkey system',
+                'notifications': '🔔 Smart Notification Center — Intelligent alert management',
+                'templates': '📄 Message Templates — Pre-built responses for common queries',
+                'calendar': '📅 Enhanced Calendar Integration — Deep scheduling intelligence',
+                'email': '📧 Advanced Email Assistant — Smart composition and management',
+                'search': '🔍 Universal Search Interface — Find anything, anywhere',
+                'automation': '🤖 Workflow Automation — Chain actions together'
+            };
+            
+            // Find the best match
+            const lowered = raw.toLowerCase();
+            for (const [key, value] of Object.entries(refinements)) {
+                if (lowered.includes(key)) {
+                    return value;
+                }
+            }
+            
+            // Default refinement
+            const emoji = ['💡', '⚡', '🚀', '✨', '🔥'][Math.floor(Math.random() * 5)];
+            return `${emoji} ${raw.charAt(0).toUpperCase() + raw.slice(1)} — Submitted by a human visitor`;
+        }
+
+        // Get complexity rating
+        function getComplexity(idea) {
+            const complex = ['voice', 'ai', 'machine learning', 'windows', 'platform', 'integration'];
+            const medium = ['ui', 'interface', 'design', 'notification', 'search'];
+            
+            const lowered = idea.toLowerCase();
+            if (complex.some(term => lowered.includes(term))) {
+                return '⭐⭐⭐⭐';
+            } else if (medium.some(term => lowered.includes(term))) {
+                return '⭐⭐⭐';
+            } else {
+                return '⭐⭐';
+            }
+        }
+
+        // Format time
+        function formatTime(timestamp) {
+            const diff = Date.now() - timestamp;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(minutes / 60);
+            const days = Math.floor(hours / 24);
+            
+            if (days > 0) return `${days} day${days > 1 ? 's' : ''} ago`;
+            if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+            if (minutes > 0) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+            return 'Just now';
+        }
+
+        // Open document
+        function openDoc(docName) {
+            window.open(`https://github.com/meircohen/openpaw-hq/tree/main/docs/${docName.toLowerCase()}.md`, '_blank');
+        }
+
+        // Update visitor count
+        function updateVisitorCount() {
+            const count = Math.floor(Math.random() * 20) + 5;
+            document.getElementById('visitor-count').textContent = count;
+        }
+
+        // Create floating particles
+        function createParticle() {
+            const particles = ['<', '>', '{', '}', '=>', '()', '[]', '||'];
+            const particle = document.createElement('div');
+            particle.className = 'code-particle';
+            particle.textContent = particles[Math.floor(Math.random() * particles.length)];
+            particle.style.left = Math.random() * 100 + '%';
+            document.body.appendChild(particle);
+            
+            setTimeout(() => particle.remove(), 10000);
+        }
+
+        // Day/night cycle
+        function updateDayNight() {
+            const hour = new Date().getHours();
+            const isNight = hour >= 22 || hour <= 6;
+            
+            if (isNight) {
+                document.body.classList.add('night-mode');
+            } else {
+                document.body.classList.remove('night-mode');
+            }
+        }
+
+        // Initialize everything
+        function init() {
+            renderAgents();
+            renderWarRoom();
+            renderCommunityIdeas();
+            renderLeaderboard();
+            updateVisitorCount();
+            updateDayNight();
+            
+            // Award first visit achievement
+            awardAchievement('🐾', 'First Paw', 'Visited OpenPaw HQ');
+            
+            // Set up forge button
+            document.getElementById('forge-button').addEventListener('click', forgeIdea);
+            
+            // Set up intervals
+            setInterval(updateVisitorCount, 30000);
+            setInterval(createParticle, 3000);
+            setInterval(updateDayNight, 60000);
+            
+            // Rotate agent speech bubbles
+            setInterval(() => {
+                document.querySelectorAll('.agent-card').forEach(card => {
+                    const agentId = card.dataset.id;
+                    const agent = agents.find(a => a.id === agentId);
+                    const bubble = card.querySelector('.speech-bubble');
+                    bubble.textContent = agent.chatLines[Math.floor(Math.random() * agent.chatLines.length)];
+                });
+            }, 8000);
+        }
+
+        // Start everything
+        init();
+    </script>
 </body>
 </html>
